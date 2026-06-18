@@ -1,0 +1,30 @@
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  try {
+    // Daily candles since IPO (range covers more than enough, we filter client-side)
+    const r = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/SPCX?interval=1d&range=2mo', {
+      headers: { 'User-Agent': 'Mozilla/5.0' }
+    });
+    const data = await r.json();
+    const result = data?.chart?.result?.[0];
+    if (!result) throw new Error('No data');
+
+    const timestamps = result.timestamp || [];
+    const closes = result.indicators?.quote?.[0]?.close || [];
+
+    // Build array of { date: 'YYYY-MM-DD' (NYSE/ET calendar date), close }
+    const days = timestamps.map((ts, i) => {
+      // Convert UTC timestamp to ET calendar date for the trading day label
+      const d = new Date(ts * 1000);
+      const etDateStr = d.toLocaleDateString('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' });
+      // etDateStr is MM/DD/YYYY -> convert to YYYY-MM-DD
+      const [m, day, y] = etDateStr.split('/');
+      const iso = `${y}-${m}-${day}`;
+      return { date: iso, close: closes[i] };
+    }).filter(d => d.close !== null && d.close !== undefined);
+
+    res.json({ days });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
+}
