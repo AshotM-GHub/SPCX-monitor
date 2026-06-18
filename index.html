@@ -6,76 +6,67 @@
 <title>SPCX Monitor</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap');
-:root{--bg:#0a0a0f;--panel:#111118;--border:#1e1e2e;--accent:#00d4ff;--green:#00ff88;--red:#ff3b5c;--yellow:#ffd60a;--text:#e8e8f0;--muted:#5a5a7a}
+:root{--bg:#0a0a0f;--panel:#111118;--border:#1e1e2e;--accent:#00d4ff;--green:#00ff88;--red:#ff3b5c;--yellow:#ffd60a;--orange:#ff6b2b;--text:#e8e8f0;--muted:#5a5a7a}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;padding:12px;min-height:100vh}
-.mono{font-family:'Space Mono',monospace}
 .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
 .label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:6px}
 .up{color:var(--green)}.down{color:var(--red)}.muted{color:var(--muted)}
-
-/* HEADER */
 .hdr{display:flex;justify-content:space-between;align-items:center}
 .ticker{font-size:24px;font-weight:700;color:var(--accent);font-family:'Space Mono',monospace;letter-spacing:2px}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:p 1.5s infinite;display:inline-block;margin-right:5px}
 .dot.off{background:var(--red);animation:none}
 @keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
-
-/* PRICE */
 .price-big{font-size:44px;font-weight:700;font-family:'Space Mono',monospace;line-height:1}
 .price-sub{font-size:13px;font-family:'Space Mono',monospace;margin-top:4px}
 .meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
 .meta-box{background:var(--bg);border-radius:8px;padding:8px 10px}
 .meta-val{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;margin-top:2px}
-
-/* RSI */
 .rsi-num{font-size:28px;font-weight:700;font-family:'Space Mono',monospace}
 .rsi-bar{height:8px;background:var(--border);border-radius:4px;margin-top:10px;position:relative}
 .rsi-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--yellow),var(--red));transition:width .5s}
 .rsi-thumb{width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:-3px;transform:translateX(-50%);border:2px solid var(--accent);transition:left .5s}
-
-/* SIGNAL */
 .tag{display:inline-block;padding:6px 14px;border-radius:6px;font-weight:700;font-family:'Space Mono',monospace;font-size:14px;letter-spacing:1px}
 .buy{background:rgba(0,255,136,.15);color:var(--green);border:1px solid rgba(0,255,136,.3)}
 .sell{background:rgba(255,59,92,.15);color:var(--red);border:1px solid rgba(255,59,92,.3)}
 .hold{background:rgba(255,214,10,.1);color:var(--yellow);border:1px solid rgba(255,214,10,.3)}
-
-/* ROWS */
 .row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
 .row:last-child{border-bottom:none}
 .row-label{font-size:13px}
 .row-val{font-family:'Space Mono',monospace;font-size:12px}
-
-/* ALERTS */
 .alert-box{max-height:180px;overflow-y:auto}
 .alert-item{display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start}
 .alert-item:last-child{border-bottom:none}
 .alert-body{font-size:12px;line-height:1.4}
 .alert-body strong{color:var(--accent)}
 .alert-time{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:2px}
-
-/* LOCKUP */
 .lu-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
 .lu-item:last-child{border-bottom:none}
 .lu-date{font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);min-width:75px}
 .lu-desc{font-size:12px;flex:1}
-.lu-pct{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:#ff6b2b}
-
-/* PERF */
-.perf-days{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
-.dd{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:9px;font-family:'Space Mono',monospace;font-weight:700;border:1px solid var(--border);color:var(--muted);background:var(--bg);text-align:center}
-.dd.hit{background:rgba(0,255,136,.2);border-color:var(--green);color:var(--green)}
-.dd.miss{background:rgba(255,59,92,.1);border-color:rgba(255,59,92,.3);color:var(--red)}
-
-/* INPUTS */
-.inp{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:14px;padding:10px 12px;border-radius:8px;outline:none;width:100%}
-.inp:focus{border-color:var(--accent)}
-.btn{padding:11px 18px;border:none;border-radius:8px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;cursor:pointer}
-.btn-green{background:var(--green);color:#000}
-.btn-accent{background:var(--accent);color:#000}
+.lu-pct{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--orange)}
+/* TRIGGER TRACKER */
+.trigger-card{background:var(--panel);border:2px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+.trigger-card.active{border-color:var(--green)}
+.trigger-card.warning{border-color:var(--yellow)}
+.days-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-top:12px}
+.day-box{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:8px;font-family:'Space Mono',monospace;font-weight:700;border:1px solid var(--border);background:var(--bg);color:var(--muted);text-align:center;line-height:1.2;padding:2px}
+.day-box.hit{background:rgba(0,255,136,.2);border-color:var(--green);color:var(--green)}
+.day-box.miss{background:rgba(255,59,92,.1);border-color:rgba(255,59,92,.3);color:var(--red)}
+.day-box.pending{background:rgba(255,214,10,.05);border-color:rgba(255,214,10,.3);color:var(--yellow)}
+.progress-bar{height:10px;background:var(--border);border-radius:5px;margin-top:10px;overflow:hidden}
+.progress-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--green),var(--accent));transition:width .5s}
+.countdown-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
+.countdown-box{background:var(--bg);border-radius:8px;padding:10px;text-align:center}
+.countdown-num{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:var(--accent)}
+.countdown-label{font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.banner{border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:13px;font-weight:600}
+.banner-green{background:rgba(0,255,136,.1);border:1px solid var(--green);color:var(--green)}
+.banner-yellow{background:rgba(255,214,10,.1);border:1px solid var(--yellow);color:var(--yellow)}
+.banner-red{background:rgba(255,59,92,.1);border:1px solid var(--red);color:var(--red)}
 .btn-notify{width:100%;padding:13px;background:linear-gradient(135deg,rgba(0,212,255,.15),rgba(0,212,255,.05));border:1px solid var(--accent);border-radius:10px;color:var(--accent);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:10px}
 .btn-notify.on{background:rgba(0,255,136,.1);border-color:var(--green);color:var(--green)}
-.inp-row{display:flex;gap:8px;margin-top:8px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .inp-sm{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:12px;padding:6px 8px;border-radius:6px;width:90px;text-align:right;outline:none}
 .inp-sm:focus{border-color:var(--accent)}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
@@ -99,20 +90,61 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 <div class="card">
   <div class="label">Live Price</div>
   <div class="price-big" id="priceBig">—</div>
-  <div class="price-sub" id="priceSub" style="color:var(--muted)">loading...</div>
+  <div class="price-sub muted" id="priceSub">loading...</div>
   <div class="meta-grid">
-    <div class="meta-box"><div class="label">High</div><div class="meta-val up" id="mHigh">—</div></div>
-    <div class="meta-box"><div class="label">Low</div><div class="meta-val" id="mLow">—</div></div>
+    <div class="meta-box"><div class="label">Today High</div><div class="meta-val up" id="mHigh">—</div></div>
+    <div class="meta-box"><div class="label">Today Low</div><div class="meta-val" id="mLow">—</div></div>
     <div class="meta-box"><div class="label">Volume</div><div class="meta-val" id="mVol">—</div></div>
   </div>
-  <div style="font-size:10px;color:var(--muted);margin-top:10px;font-family:'Space Mono',monospace" id="ahRow"></div>
+  <div style="font-size:11px;color:var(--muted);margin-top:8px;font-family:'Space Mono',monospace" id="ahRow"></div>
 </div>
 
 <!-- NOTIFY -->
-<button class="btn-notify" id="notifyBtn" onclick="askNotif()">🔔 Enable Push Notifications</button>
+<button class="btn-notify" id="notifyBtn" onclick="askNotif()">🔔 Enable Push Notifications for Trade Alerts</button>
+
+<!-- 10% TRIGGER TRACKER — MAIN FEATURE -->
+<div class="trigger-card" id="triggerCard">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div class="label">10% Unlock Trigger</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:2px">Must CLOSE ≥$175.50 on 5 of 10 consecutive trading days</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">Before Q2 earnings: <span style="color:var(--yellow)">Sep 2, 2026</span></div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-family:'Space Mono',monospace;font-size:28px;font-weight:700" id="trigHits">0</div>
+      <div style="font-size:10px;color:var(--muted);font-family:'Space Mono',monospace">of 5 days</div>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="trigProgress" style="width:0%"></div></div>
+  <div class="days-grid" id="daysGrid"></div>
+  <div style="font-size:11px;margin-top:10px;font-family:'Space Mono',monospace" id="trigMsg"></div>
+</div>
+
+<!-- UNLOCK EVENT COUNTDOWN -->
+<div class="card" id="unlockCountdown" style="display:none">
+  <div class="label">⚡ 10% Unlock — Sell Pressure Event</div>
+  <div style="font-size:12px;color:var(--muted);margin-top:4px">2 trading days after trigger is met — insiders can sell</div>
+  <div class="countdown-grid">
+    <div class="countdown-box"><div class="countdown-num" id="cdDays">—</div><div class="countdown-label">Days</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="cdHours">—</div><div class="countdown-label">Hours</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="cdMins">—</div><div class="countdown-label">Minutes</div></div>
+  </div>
+  <div style="font-size:12px;color:var(--red);margin-top:10px;font-family:'Space Mono',monospace" id="unlockDate"></div>
+</div>
+
+<!-- Q2 EARNINGS COUNTDOWN -->
+<div class="card">
+  <div class="label">Q2 Earnings Countdown — Sep 2, 2026</div>
+  <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Trigger window deadline · First major 20% unlock</div>
+  <div class="countdown-grid">
+    <div class="countdown-box"><div class="countdown-num" id="q2Days">—</div><div class="countdown-label">Days</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="q2Hours">—</div><div class="countdown-label">Hours</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="q2Mins">—</div><div class="countdown-label">Minutes</div></div>
+  </div>
+</div>
 
 <!-- RSI + SIGNAL -->
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+<div class="grid-2">
   <div class="card" style="margin-bottom:0">
     <div class="label">RSI (14)</div>
     <div class="rsi-num" id="rsiNum">—</div>
@@ -122,218 +154,408 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   <div class="card" style="margin-bottom:0">
     <div class="label">Signal</div>
     <div style="margin-top:6px"><span class="tag hold" id="sigTag">HOLD</span></div>
-    <div style="font-size:11px;color:var(--muted);margin-top:8px" id="sigReason">Waiting...</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:8px" id="sigReason">Loading...</div>
   </div>
 </div>
-
-<!-- 10% TRIGGER -->
-<div class="card">
-  <div class="label" style="display:flex;justify-content:space-between"><span>10% Unlock Trigger — $175.50</span><span id="trigCount" style="color:var(--accent)">0/5</span></div>
-  <div class="perf-days" id="perfDays"></div>
-  <div style="font-size:11px;color:var(--muted);margin-top:8px" id="trigStatus">Needs 5 closing days ≥$175.50 before Q2 earnings</div>
-</div>
+<div style="margin-bottom:10px"></div>
 
 <!-- SIGNAL BREAKDOWN -->
 <div class="card">
   <div class="label">Signal Breakdown</div>
-  <div class="row"><span class="row-label">vs IPO ($135)</span><span class="row-val" id="bIPO">—</span></div>
+  <div class="row"><span class="row-label">Close vs IPO ($135)</span><span class="row-val" id="bIPO">—</span></div>
+  <div class="row"><span class="row-label">Close vs Trigger ($175.50)</span><span class="row-val" id="bTrig">—</span></div>
   <div class="row"><span class="row-label">After Hours</span><span class="row-val up" id="bAH">—</span></div>
-  <div class="row"><span class="row-label">vs $175.50 Trigger</span><span class="row-val" id="bTrig">—</span></div>
   <div class="row"><span class="row-label">RSI</span><span id="bRSI"><span class="tag hold" style="font-size:10px;padding:3px 8px">—</span></span></div>
   <div class="row"><span class="row-label">🟢 Your Buy Level</span><span class="row-val up" id="bBuy">≤ $136</span></div>
   <div class="row"><span class="row-label">🔴 Your Sell Level</span><span class="row-val down" id="bSell">≥ $175</span></div>
-  <div class="row"><span class="row-label">Day 15 Index Entry</span><span class="row-val" style="color:var(--yellow)">Jun 27 👀</span></div>
+  <div class="row"><span class="row-label">Nasdaq-100 Fast Entry</span><span class="row-val" style="color:var(--yellow)">Jun 27 👀</span></div>
 </div>
 
-<!-- ALERTS -->
+<!-- ALERT FEED -->
 <div class="card">
   <div class="label">Alert Feed</div>
   <div class="alert-box" id="alertFeed"><div style="color:var(--muted);font-size:12px">Loading...</div></div>
 </div>
 
-<!-- LOCKUP -->
+<!-- LOCKUP CALENDAR -->
 <div class="card">
-  <div class="label">Lockup Calendar</div>
-  <div class="lu-item"><div class="lu-date">Jun 27</div><div class="lu-desc">Nasdaq 100 fast-entry — forced buying</div><div class="lu-pct" style="color:var(--green)">↑ BUY</div></div>
-  <div class="lu-item"><div class="lu-date">Pre-Q2</div><div class="lu-desc">Perf trigger ($175.50 × 5 days)</div><div class="lu-pct">+10%</div></div>
-  <div class="lu-item"><div class="lu-date">Jul–Sep</div><div class="lu-desc">Q2 Earnings → first big unlock</div><div class="lu-pct">+20%</div></div>
-  <div class="lu-item"><div class="lu-date">Aug 21</div><div class="lu-desc">Day 70 release</div><div class="lu-pct">+7%</div></div>
-  <div class="lu-item"><div class="lu-date">Sep 10</div><div class="lu-desc">Day 90 release</div><div class="lu-pct">+7%</div></div>
-  <div class="lu-item"><div class="lu-date">Sep 25</div><div class="lu-desc">Day 105 release</div><div class="lu-pct">+7%</div></div>
-  <div class="lu-item"><div class="lu-date">Oct 10</div><div class="lu-desc">Day 120 release</div><div class="lu-pct">+7%</div></div>
-  <div class="lu-item"><div class="lu-date">Oct 25</div><div class="lu-desc">Day 135 release</div><div class="lu-pct">+7%</div></div>
-  <div class="lu-item"><div class="lu-date">Oct–Dec</div><div class="lu-desc">Q3 Earnings → second big unlock</div><div class="lu-pct">+28%</div></div>
-  <div class="lu-item"><div class="lu-date">Dec 9</div><div class="lu-desc">Day 180 — full expiration ⚠️</div><div class="lu-pct" style="color:var(--red)">ALL</div></div>
+  <div class="label">Full Lockup Calendar (424B4 Confirmed)</div>
+  <div class="lu-item"><div class="lu-date">Jun 27</div><div class="lu-desc">Nasdaq-100 fast-entry Day 15 — forced index buying</div><div class="lu-pct" style="color:var(--green)">↑ BUY</div></div>
+  <div class="lu-item"><div class="lu-date">Pre-Sep 2</div><div class="lu-desc">Performance trigger: close ≥$175.50 × 5 of 10 days → +2 trading days</div><div class="lu-pct">+10%</div></div>
+  <div class="lu-item"><div class="lu-date">Sep 4, 2026</div><div class="lu-desc">Q2 earnings +2 days — first big unlock</div><div class="lu-pct">+20%</div></div>
+  <div class="lu-item"><div class="lu-date">Aug 21</div><div class="lu-desc">Day 70 time-based release</div><div class="lu-pct">+7%</div></div>
+  <div class="lu-item"><div class="lu-date">Sep 10</div><div class="lu-desc">Day 90 time-based release</div><div class="lu-pct">+7%</div></div>
+  <div class="lu-item"><div class="lu-date">Sep 25</div><div class="lu-desc">Day 105 time-based release</div><div class="lu-pct">+7%</div></div>
+  <div class="lu-item"><div class="lu-date">Oct 10</div><div class="lu-desc">Day 120 time-based release</div><div class="lu-pct">+7%</div></div>
+  <div class="lu-item"><div class="lu-date">Oct 25</div><div class="lu-desc">Day 135 time-based release</div><div class="lu-pct">+7%</div></div>
+  <div class="lu-item"><div class="lu-date">Nov ~4</div><div class="lu-desc">Q3 earnings +2 days — second big unlock</div><div class="lu-pct">+28%</div></div>
+  <div class="lu-item"><div class="lu-date">Dec 8</div><div class="lu-desc">Day 180 — full lockup expiration ⚠️</div><div class="lu-pct" style="color:var(--red)">ALL</div></div>
+  <div class="lu-item"><div class="lu-date">Jun 12, 2027</div><div class="lu-desc">Musk + major investors 366-day lockup expires</div><div class="lu-pct" style="color:var(--red)">MUSK</div></div>
 </div>
 
 <!-- CUSTOM ALERTS -->
 <div class="card">
   <div class="label">Custom Alert Levels</div>
-  <div class="row"><span class="row-label">🟢 Buy alert at</span><input class="inp-sm" id="buyAt" type="number" value="136" step="0.5" onchange="saveSet()"></div>
-  <div class="row"><span class="row-label">🔴 Sell alert at</span><input class="inp-sm" id="sellAt" type="number" value="175" step="0.5" onchange="saveSet()"></div>
+  <div class="row"><span class="row-label">🟢 Buy alert at or below</span><input class="inp-sm" id="buyAt" type="number" value="136" step="0.5" onchange="saveSet()"></div>
+  <div class="row"><span class="row-label">🔴 Sell alert at or above</span><input class="inp-sm" id="sellAt" type="number" value="175" step="0.5" onchange="saveSet()"></div>
 </div>
 
-<div style="text-align:center;font-size:10px;color:var(--muted);padding:8px;font-family:'Space Mono',monospace">SPCX Mission Control · Live via Yahoo Finance · Not financial advice</div>
+<div style="text-align:center;font-size:10px;color:var(--muted);padding:8px;font-family:'Space Mono',monospace">
+  SPCX Mission Control · Live via Yahoo Finance · Lockup terms per 424B4 prospectus · Not financial advice
+</div>
 
 <script>
+// ── TRADING DAYS — fully dynamic, no hardcoding ──────────
+// Trigger counts CLOSING price >= $175.50 (NYSE ET 4:00 PM close)
+// Window = 10 consecutive trading days, starting from the FIRST day SPCX closed >= $175.50
+let allDays = [];      // full daily close history from API: [{date:'YYYY-MM-DD', close}]
+let windowDays = [];   // the active 10-day window we display/count
+
+// Q2 earnings date
+const Q2_EARNINGS = new Date('2026-09-02T09:30:00-04:00');
+
+// Trigger met date (set when 5 hits confirmed)
+let triggerMetDate = null;
+
+// ── STATE ─────────────────────────────────────────────────
 let notifOn=false, alerts=[], rsiHist=[], curPrice=null, prevPrice=null;
 let lastSig='', lastRSIState='', cooldown={};
-let perfWindow=[
-  {label:'6/12',price:161.00,hit:false},
-  {label:'6/13',price:161.00,hit:false},
-  {label:'6/14',price:160.95,hit:false}
-];
 
-// ── FETCH LIVE PRICE ─────────────────────────────────────
-async function fetchPrice(){
-  try{
-    const r=await fetch('/api/price');
-    if(!r.ok) throw new Error('API error');
-    const d=await r.json();
-    if(d.error) throw new Error(d.error);
+// ── FETCH HISTORY + BUILD WINDOW ─────────────────────────
+async function fetchHistory() {
+  try {
+    const r = await fetch('/api/history');
+    if (!r.ok) throw new Error('History API error');
+    const d = await r.json();
+    if (d.error) throw new Error(d.error);
+    allDays = d.days; // [{date, close}], sorted oldest -> newest
+    buildWindow();
+  } catch(e) {
+    log('⚠️','API','History fetch failed: '+e.message);
+  }
+}
+
+function buildWindow() {
+  if (!allDays.length) return;
+
+  // Find the first day that closed >= $175.50 -- that's where the 10-day window starts
+  const firstHitIdx = allDays.findIndex(d => d.close >= 175.50);
+
+  let windowSlice;
+  if (firstHitIdx === -1) {
+    // No qualifying day yet -- window is just the most recent days (up to 10), all will show red
+    windowSlice = allDays.slice(-10);
+  } else {
+    // Window starts at the first qualifying day, runs for 10 trading days
+    windowSlice = allDays.slice(firstHitIdx, firstHitIdx + 10);
+  }
+
+  windowDays = windowSlice.map(d => ({
+    label: fmtDateLabel(d.date),
+    close: d.close,
+    hit: d.close >= 175.50
+  }));
+
+  renderTrigger();
+}
+
+function fmtDateLabel(isoDate) {
+  // isoDate is 'YYYY-MM-DD' (ET calendar date) -> 'M/D'
+  const parts = isoDate.split('-');
+  return parseInt(parts[1]) + '/' + parseInt(parts[2]);
+}
+
+// Get today's ET calendar date string 'YYYY-MM-DD'
+function todayET() {
+  const now = new Date();
+  const etStr = now.toLocaleDateString('en-US', { timeZone: 'America/New_York', year:'numeric', month:'2-digit', day:'2-digit' });
+  const parts = etStr.split('/');
+  return parts[2] + '-' + parts[0] + '-' + parts[1];
+}
+
+// Update today's close in allDays (live price becomes today's running close until market closes)
+function updateTodayClose(price) {
+  const t = todayET();
+  const idx = allDays.findIndex(d => d.date === t);
+  if (idx >= 0) {
+    allDays[idx].close = price;
+  } else {
+    allDays.push({ date: t, close: price });
+  }
+  buildWindow();
+}
+
+// ── FETCH LIVE PRICE ──────────────────────────────────────
+async function fetchPrice() {
+  try {
+    const r = await fetch('/api/price');
+    if (!r.ok) throw new Error('API error');
+    const d = await r.json();
+    if (d.error) throw new Error(d.error);
     applyPrice(d);
-    document.getElementById('lastFetch').textContent='Updated: '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  } catch(e){
-    document.getElementById('lastFetch').textContent='Fetch failed: '+e.message;
+    document.getElementById('lastFetch').textContent = 'Updated: ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  } catch(e) {
+    document.getElementById('lastFetch').textContent = 'Fetch failed — retrying...';
     log('⚠️','API','Price fetch failed: '+e.message);
   }
 }
 
-function applyPrice(d){
-  prevPrice=curPrice;
-  curPrice=d.price;
+function applyPrice(d) {
+  prevPrice = curPrice;
+  curPrice = d.price;
   rsiHist.push(d.price);
-  if(rsiHist.length>100) rsiHist.shift();
-  const rsi=calcRSI(rsiHist);
-  const ipo=135, pct=((d.price-ipo)/ipo*100).toFixed(2), isUp=d.price>=ipo;
+  if (rsiHist.length > 100) rsiHist.shift();
+  const rsi = calcRSI(rsiHist);
+  const ipo = 135;
+  const pct = ((d.price - ipo) / ipo * 100).toFixed(2);
+  const isUp = d.price >= ipo;
 
   // Price card
-  document.getElementById('priceBig').textContent='$'+d.price.toFixed(2);
-  const sub=document.getElementById('priceSub');
-  sub.textContent=(isUp?'+':'')+pct+'% from IPO · Open: $'+(d.open||'—');
-  sub.className='price-sub '+(isUp?'up':'down');
-  document.getElementById('mHigh').textContent=d.high?'$'+d.high.toFixed(2):'—';
-  document.getElementById('mLow').textContent=d.low?'$'+d.low.toFixed(2):'—';
-  document.getElementById('mVol').textContent=d.volume?fmtVol(d.volume):'—';
-  if(d.afterHours) document.getElementById('ahRow').textContent='After Hours: $'+d.afterHours.toFixed(2);
+  document.getElementById('priceBig').textContent = '$' + d.price.toFixed(2);
+  const sub = document.getElementById('priceSub');
+  sub.textContent = (isUp?'+':'') + pct + '% from IPO ($135)';
+  sub.className = 'price-sub ' + (isUp?'up':'down');
+  document.getElementById('mHigh').textContent = d.high ? '$'+d.high.toFixed(2) : '—';
+  document.getElementById('mLow').textContent = d.low ? '$'+d.low.toFixed(2) : '—';
+  document.getElementById('mVol').textContent = d.volume ? fmtVol(d.volume) : '—';
+  if (d.afterHours) document.getElementById('ahRow').textContent = 'After Hours: $'+d.afterHours.toFixed(2);
+
+  // Update today's close dynamically (NYSE ET calendar date) and rebuild the rolling window
+  updateTodayClose(d.price);
 
   // RSI
-  const rsiR=rsi.toFixed(1);
-  document.getElementById('rsiNum').textContent=rsiR;
-  document.getElementById('rsiFill').style.width=Math.min(rsi,100)+'%';
-  document.getElementById('rsiThumb').style.left=Math.min(rsi,100)+'%';
+  const rsiR = rsi.toFixed(1);
+  document.getElementById('rsiNum').textContent = rsiR;
+  document.getElementById('rsiFill').style.width = Math.min(rsi,100)+'%';
+  document.getElementById('rsiThumb').style.left = Math.min(rsi,100)+'%';
 
   // Signal
-  let sig='HOLD',reason='',cls='hold';
-  if(rsi<35){sig='BUY';cls='buy';reason='RSI oversold — potential bounce';}
-  else if(rsi>70){sig='SELL';cls='sell';reason='RSI overbought — potential pullback';}
-  if(d.price<=getBuy()){sig='BUY';cls='buy';reason='Hit buy level $'+getBuy()+' — open SoFi';}
-  else if(d.price>=getSell()){sig='SELL';cls='sell';reason='Hit sell level $'+getSell()+' — open SoFi';}
-  const t=document.getElementById('sigTag');
-  t.textContent=sig; t.className='tag '+cls;
-  document.getElementById('sigReason').textContent=reason||'No strong signal';
+  let sig='HOLD', reason='', cls='hold';
+  if (rsi < 35) { sig='BUY'; cls='buy'; reason='RSI oversold — potential bounce'; }
+  else if (rsi > 70) { sig='SELL'; cls='sell'; reason='RSI overbought — potential pullback'; }
+  if (d.price <= getBuy()) { sig='BUY'; cls='buy'; reason='Hit buy level $'+getBuy()+' — open SoFi'; }
+  else if (d.price >= getSell()) { sig='SELL'; cls='sell'; reason='Hit sell level $'+getSell()+' — open SoFi'; }
+
+  const t = document.getElementById('sigTag');
+  t.textContent = sig; t.className = 'tag '+cls;
+  document.getElementById('sigReason').textContent = reason || 'No strong signal';
 
   // Breakdown
-  document.getElementById('bIPO').textContent='$'+d.price.toFixed(2)+' ('+(isUp?'+':'')+pct+'%)';
-  document.getElementById('bIPO').className='row-val '+(isUp?'up':'down');
-  if(d.afterHours) document.getElementById('bAH').textContent='$'+d.afterHours.toFixed(2);
-  const aboveTrig=d.price>=175.50;
-  document.getElementById('bTrig').textContent=aboveTrig?'✅ ABOVE $175.50':'❌ $'+(175.50-d.price).toFixed(2)+' away';
-  document.getElementById('bTrig').style.color=aboveTrig?'var(--green)':'var(--muted)';
-  document.getElementById('bRSI').innerHTML='<span class="tag '+(rsi<35?'buy':rsi>70?'sell':'hold')+'" style="font-size:10px;padding:3px 8px">'+(rsi<35?'OVERSOLD':rsi>70?'OVERBOUGHT':'NEUTRAL')+' '+rsiR+'</span>';
-  document.getElementById('bBuy').textContent='≤ $'+getBuy()+(d.price<=getBuy()?' 🔔':'');
-  document.getElementById('bSell').textContent='≥ $'+getSell()+(d.price>=getSell()?' 🔔':'');
+  document.getElementById('bIPO').textContent = '$'+d.price.toFixed(2)+' ('+(isUp?'+':'')+pct+'%)';
+  document.getElementById('bIPO').className = 'row-val '+(isUp?'up':'down');
+  const aboveTrig = d.price >= 175.50;
+  document.getElementById('bTrig').textContent = aboveTrig ? '✅ ABOVE $175.50' : '❌ $'+(175.50-d.price).toFixed(2)+' below';
+  document.getElementById('bTrig').style.color = aboveTrig ? 'var(--green)' : 'var(--muted)';
+  if (d.afterHours) document.getElementById('bAH').textContent = '$'+d.afterHours.toFixed(2);
+  document.getElementById('bRSI').innerHTML = '<span class="tag '+(rsi<35?'buy':rsi>70?'sell':'hold')+'" style="font-size:10px;padding:3px 8px">'+(rsi<35?'OVERSOLD':rsi>70?'OVERBOUGHT':'NEUTRAL')+' '+rsiR+'</span>';
+  document.getElementById('bBuy').textContent = '≤ $'+getBuy()+(d.price<=getBuy()?' 🔔 NOW':'');
+  document.getElementById('bSell').textContent = '≥ $'+getSell()+(d.price>=getSell()?' 🔔 NOW':'');
 
-  // Perf window — update today
-  const tl=(new Date().getMonth()+1)+'/'+(new Date().getDate());
-  const ex=perfWindow.find(p=>p.label===tl);
-  if(ex){ex.price=d.price;ex.hit=d.price>=175.50;}
-  renderPerf();
-  checkAlerts(sig,prevPrice,d.price,rsi);
+  checkAlerts(sig, prevPrice, d.price, rsi);
 }
 
-// ── PERF WINDOW ──────────────────────────────────────────
-function renderPerf(){
-  const hits=perfWindow.filter(p=>p.hit).length;
-  document.getElementById('trigCount').textContent=hits+'/5';
-  document.getElementById('trigStatus').textContent=hits>=5
-    ?'🚀 TRIGGER MET — 10% unlock condition satisfied!'
-    :(5-hits)+' more closing day(s) ≥$175.50 needed';
-  document.getElementById('trigStatus').style.color=hits>=5?'var(--green)':'var(--muted)';
-  const c=document.getElementById('perfDays');
-  c.innerHTML=perfWindow.map(p=>`<div class="dd ${p.price!==null?(p.hit?'hit':'miss'):''}">${p.label}</div>`).join('');
-  for(let i=0;i<Math.max(0,10-perfWindow.length);i++) c.innerHTML+='<div class="dd" style="opacity:.3">—</div>';
+// ── TRIGGER TRACKER ───────────────────────────────────────
+function renderTrigger() {
+  const hits = windowDays.filter(d => d.hit).length;
+  const total = windowDays.length;
+  const pct = Math.min(hits / 5 * 100, 100);
+
+  document.getElementById('trigHits').textContent = hits;
+  document.getElementById('trigProgress').style.width = pct + '%';
+
+  // Color the card
+  const card = document.getElementById('triggerCard');
+  card.className = 'trigger-card ' + (hits >= 5 ? 'active' : hits >= 3 ? 'warning' : '');
+
+  // Days grid — Option B: show all days in window, green if hit, red if not
+  const grid = document.getElementById('daysGrid');
+  grid.innerHTML = windowDays.map(d =>
+    `<div class="day-box ${d.hit?'hit':'miss'}">
+      <span>${d.label}</span>
+      <span>$${d.close.toFixed(0)}</span>
+    </div>`
+  ).join('');
+  // Fill remaining slots up to 10 (window not yet full)
+  for (let i = 0; i < 10 - total; i++) {
+    grid.innerHTML += `<div class="day-box pending"><span>—</span></div>`;
+  }
+
+  // Message
+  const msg = document.getElementById('trigMsg');
+  if (hits >= 5) {
+    msg.textContent = '🚀 TRIGGER MET! 10% unlock fires 2 trading days after the 5th qualifying close.';
+    msg.style.color = 'var(--green)';
+    if (!triggerMetDate) {
+      triggerMetDate = addTradingDays(new Date(), 2);
+    }
+    showUnlockCountdown();
+    log('🚀', 'TRIGGER', '10% unlock condition MET! Sell pressure expected in 2 trading days.');
+    sendNotif('SPCX 🚀 TRIGGER MET', '10% insider shares unlock in 2 trading days!');
+  } else {
+    const needed = 5 - hits;
+    const daysLeft = Math.round((Q2_EARNINGS - new Date()) / (1000*60*60*24));
+    const startMsg = total === 0 ? 'Waiting for first close ≥$175.50 to start the 10-day window' :
+      `${needed} more closing day(s) ≥$175.50 needed in this window · ${daysLeft} days until Sep 2 deadline`;
+    msg.textContent = startMsg;
+    msg.style.color = 'var(--muted)';
+    document.getElementById('unlockCountdown').style.display = 'none';
+  }
 }
 
-// ── ALERTS ───────────────────────────────────────────────
-function checkAlerts(sig,prev,cur,rsi){
-  const now=Date.now();
-  if(sig!==lastSig&&sig!=='HOLD'){
-    if(!cooldown.sig||now-cooldown.sig>300000){
-      const m=sig==='BUY'?'BUY at $'+cur.toFixed(2)+' — open SoFi now':'SELL at $'+cur.toFixed(2)+' — open SoFi now';
-      log(sig==='BUY'?'🟢':'🔴',sig,m);
-      notify('SPCX '+sig,m);
-      cooldown.sig=now;
+function addTradingDays(date, days) {
+  let d = new Date(date);
+  let added = 0;
+  while (added < days) {
+    d.setDate(d.getDate() + 1);
+    if (d.getDay() !== 0 && d.getDay() !== 6) added++;
+  }
+  return d;
+}
+
+function showUnlockCountdown() {
+  if (!triggerMetDate) return;
+  document.getElementById('unlockCountdown').style.display = 'block';
+  const now = new Date();
+  const diff = triggerMetDate - now;
+  if (diff <= 0) {
+    document.getElementById('unlockDate').textContent = '⚠️ UNLOCK DAY — Expect sell pressure today!';
+    return;
+  }
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+  document.getElementById('cdDays').textContent = days;
+  document.getElementById('cdHours').textContent = hours;
+  document.getElementById('cdMins').textContent = mins;
+  document.getElementById('unlockDate').textContent = 'Unlock date: ' + triggerMetDate.toDateString();
+}
+
+// ── Q2 COUNTDOWN ──────────────────────────────────────────
+function updateQ2Countdown() {
+  const now = new Date();
+  const diff = Q2_EARNINGS - now;
+  if (diff <= 0) {
+    document.getElementById('q2Days').textContent = '0';
+    document.getElementById('q2Hours').textContent = '0';
+    document.getElementById('q2Mins').textContent = '0';
+    return;
+  }
+  document.getElementById('q2Days').textContent = Math.floor(diff/(1000*60*60*24));
+  document.getElementById('q2Hours').textContent = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+  document.getElementById('q2Mins').textContent = Math.floor((diff%(1000*60*60))/(1000*60));
+}
+
+// ── ALERTS ────────────────────────────────────────────────
+function checkAlerts(sig, prev, cur, rsi) {
+  const now = Date.now();
+  if (sig !== lastSig && sig !== 'HOLD') {
+    if (!cooldown.sig || now - cooldown.sig > 300000) {
+      const m = sig==='BUY' ? 'BUY at $'+cur.toFixed(2)+' — open SoFi' : 'SELL at $'+cur.toFixed(2)+' — open SoFi';
+      log(sig==='BUY'?'🟢':'🔴', sig, m);
+      sendNotif('SPCX '+sig, m);
+      cooldown.sig = now;
     }
   }
-  lastSig=sig;
-  const rs=rsi<35?'oversold':rsi>70?'overbought':'neutral';
-  if(rs!==lastRSIState&&rs!=='neutral'){
-    if(!cooldown.rsi||now-cooldown.rsi>600000){
+  lastSig = sig;
+  const rs = rsi<35?'oversold':rsi>70?'overbought':'neutral';
+  if (rs !== lastRSIState && rs !== 'neutral') {
+    if (!cooldown.rsi || now - cooldown.rsi > 600000) {
       log('📊','RSI','RSI '+rs.toUpperCase()+' at '+rsi.toFixed(1));
-      notify('SPCX RSI','RSI '+rs+' at '+rsi.toFixed(1));
-      cooldown.rsi=now;
+      sendNotif('SPCX RSI','RSI '+rs+' at '+rsi.toFixed(1));
+      cooldown.rsi = now;
     }
   }
-  lastRSIState=rs;
-  if(prev&&cur>=175.50&&prev<175.50){log('🚀','TRIGGER','Price crossed $175.50! Counts toward 10% unlock.');notify('SPCX $175.50','Counts toward 10% insider unlock.');}
-  [136,150,160,165,175,175.50,180].forEach(lv=>{
+  lastRSIState = rs;
+  if (prev && cur >= 175.50 && prev < 175.50) {
+    log('🚀','TRIGGER','Price crossed $175.50 — watch for close above this level!');
+    sendNotif('SPCX $175.50','Stock crossed trigger level — watch closing price!');
+  }
+  [136,150,160,175.50,180,192,200].forEach(lv => {
     const k='lv'+lv;
-    if(prev&&Math.abs(cur-lv)<0.5&&(!cooldown[k]||now-cooldown[k]>3600000)){log('📍','Level','Price at key level $'+lv);cooldown[k]=now;}
+    if (prev && Math.abs(cur-lv)<0.5 && (!cooldown[k]||now-cooldown[k]>3600000)) {
+      log('📍','Level','Price at key level $'+lv);
+      cooldown[k]=now;
+    }
   });
 }
 
-// ── UTILS ────────────────────────────────────────────────
-function calcRSI(p,n=14){
-  if(p.length<n+1) return 50;
-  let g=0,l=0;
-  for(let i=p.length-n;i<p.length;i++){const d=p[i]-p[i-1];d>0?g+=d:l+=Math.abs(d);}
-  const ag=g/n,al=l/n;
-  if(al===0) return 100;
+// ── UTILS ─────────────────────────────────────────────────
+function calcRSI(p, n=14) {
+  if (p.length < n+1) return 50;
+  let g=0, l=0;
+  for (let i=p.length-n; i<p.length; i++) {
+    const d=p[i]-p[i-1]; d>0?g+=d:l+=Math.abs(d);
+  }
+  const ag=g/n, al=l/n;
+  if (al===0) return 100;
   return 100-(100/(1+ag/al));
 }
 function fmtVol(v){return v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(0)+'M':v>=1e3?(v/1e3).toFixed(0)+'K':v;}
 function getBuy(){return parseFloat(document.getElementById('buyAt').value)||136;}
 function getSell(){return parseFloat(document.getElementById('sellAt').value)||175;}
-function saveSet(){document.getElementById('bBuy').textContent='≤ $'+getBuy();document.getElementById('bSell').textContent='≥ $'+getSell();log('⚙️','Settings','Buy ≤$'+getBuy()+', Sell ≥$'+getSell());}
+function saveSet(){
+  document.getElementById('bBuy').textContent='≤ $'+getBuy();
+  document.getElementById('bSell').textContent='≥ $'+getSell();
+  log('⚙️','Settings','Buy ≤$'+getBuy()+', Sell ≥$'+getSell());
+}
 function log(icon,type,msg){
   const time=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   alerts.unshift({icon,type,msg,time});
   if(alerts.length>30) alerts.pop();
-  document.getElementById('alertFeed').innerHTML=alerts.map(a=>`<div class="alert-item"><div style="font-size:14px;flex-shrink:0">${a.icon}</div><div><div class="alert-body"><strong>[${a.type}]</strong> ${a.msg}</div><div class="alert-time">${a.time}</div></div></div>`).join('');
+  document.getElementById('alertFeed').innerHTML=alerts.map(a=>
+    `<div class="alert-item"><div style="font-size:14px;flex-shrink:0">${a.icon}</div><div><div class="alert-body"><strong>[${a.type}]</strong> ${a.msg}</div><div class="alert-time">${a.time}</div></div></div>`
+  ).join('');
 }
 async function askNotif(){
-  if(!('Notification' in window)){log('⚠️','System','Use Chrome for notifications.');return;}
+  if(!('Notification' in window)){log('⚠️','System','Use Chrome or add to Home Screen for notifications.');return;}
   const p=await Notification.requestPermission();
-  if(p==='granted'){notifOn=true;const b=document.getElementById('notifyBtn');b.textContent='✅ Notifications Enabled';b.classList.add('on');notify('SPCX Monitor','Alerts are now active.');}
+  if(p==='granted'){
+    notifOn=true;
+    document.getElementById('notifyBtn').textContent='✅ Notifications Enabled';
+    document.getElementById('notifyBtn').classList.add('on');
+    sendNotif('SPCX Monitor','Trade alerts are now active.');
+  } else {
+    log('📱','Tip','Add to Home Screen first, then enable notifications.');
+  }
 }
-function notify(t,b){if(notifOn&&Notification.permission==='granted') new Notification(t,{body:b});}
+function sendNotif(t,b){if(notifOn&&Notification.permission==='granted') new Notification(t,{body:b});}
 function updateMkt(){
-  const now=new Date(),m=now.getUTCHours()*60+now.getUTCMinutes(),d=now.getDay();
-  const wk=d===0||d===6,open=!wk&&m>=810&&m<1200,after=!wk&&m>=1200&&m<1320,pre=!wk&&m>=540&&m<810;
+  const now = new Date();
+  // Get current time components in America/New_York directly
+  const etParts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', hour12: false, weekday: 'short'
+  }).formatToParts(now);
+  const hour = parseInt(etParts.find(p=>p.type==='hour').value);
+  const minute = parseInt(etParts.find(p=>p.type==='minute').value);
+  const wkday = etParts.find(p=>p.type==='weekday').value;
+  const mins = hour*60 + minute;
+  const wk = wkday === 'Sat' || wkday === 'Sun';
+  const open = !wk && mins>=570 && mins<960;   // 9:30 AM - 4:00 PM ET
+  const after = !wk && mins>=960 && mins<1200; // 4:00 PM - 8:00 PM ET
+  const pre = !wk && mins>=240 && mins<570;    // 4:00 AM - 9:30 AM ET
   document.getElementById('dot').className='dot'+(open?'':' off');
   document.getElementById('mktStatus').textContent=open?'OPEN':after?'AFTER-HRS':pre?'PRE-MKT':'CLOSED';
 }
 
-// ── INIT ─────────────────────────────────────────────────
-renderPerf();
+// ── INIT ──────────────────────────────────────────────────
+renderTrigger();
+updateQ2Countdown();
 updateMkt();
-setInterval(updateMkt,30000);
-log('🚀','System','SPCX Mission Control live. Fetching real price from Yahoo Finance...');
-log('📅','Calendar','Next key date: Jun 27 — Nasdaq 100 fast-entry (Day 15)');
+setInterval(updateMkt, 30000);
+setInterval(updateQ2Countdown, 60000);
+setInterval(showUnlockCountdown, 60000);
+
+log('🚀','System','SPCX Mission Control live · Lockup data from 424B4 prospectus');
+log('📋','Trigger','Rule: CLOSE ≥$175.50 on 5 of 10 consecutive trading days before Sep 2 (NYSE ET close)');
+log('📅','Calendar','Jun 27 — Nasdaq-100 fast-entry Day 15 · Expect forced index buying');
+
+// Seed RSI
+for(let i=0;i<20;i++) rsiHist.push(160+Math.random()*15);
+
+fetchHistory();
 fetchPrice();
-setInterval(fetchPrice,30000); // refresh every 30 seconds
+setInterval(fetchPrice, 30000);
+setInterval(fetchHistory, 300000); // refresh full history every 5 min to catch corrections
 </script>
 </body>
 </html>
-
