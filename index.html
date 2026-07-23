@@ -115,9 +115,10 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 <div class="chart-card">
   <div class="label">Price History</div>
   <div class="chart-range">
-    <button class="chart-range-btn" onclick="setChartRange('1W')">1W</button>
-    <button class="chart-range-btn active" onclick="setChartRange('1M')">1M</button>
-    <button class="chart-range-btn" onclick="setChartRange('ALL')">ALL</button>
+    <button class="chart-range-btn" data-range="1d" onclick="setChartRange('1d')">1D</button>
+    <button class="chart-range-btn" data-range="1wk" onclick="setChartRange('1wk')">1W</button>
+    <button class="chart-range-btn active" data-range="1mo" onclick="setChartRange('1mo')">1M</button>
+    <button class="chart-range-btn" data-range="all" onclick="setChartRange('all')">ALL</button>
   </div>
   <div class="chart-wrap">
     <canvas id="priceChart"></canvas>
@@ -200,7 +201,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   <div class="row"><span class="row-label">Close vs Trigger ($175.50)</span><span class="row-val" id="bTrig">—</span></div>
   <div class="row"><span class="row-label">After Hours</span><span class="row-val up" id="bAH">—</span></div>
   <div class="row"><span class="row-label">RSI</span><span id="bRSI"><span class="tag hold" style="font-size:10px;padding:3px 8px">—</span></span></div>
-  <div class="row"><span class="row-label">🟢 Your Buy Level</span><span class="row-val up" id="bBuy">≤ $136</span></div>
+  <div class="row"><span class="row-label">🟢 Your Buy Level</span><span class="row-val up" id="bBuy">≤ $70</span></div>
   <div class="row"><span class="row-label">🔴 Your Sell Level</span><span class="row-val down" id="bSell">≥ $175</span></div>
   <div class="row"><span class="row-label">Nasdaq-100 Fast Entry</span><span class="row-val" style="color:var(--yellow)">Jun 27 👀</span></div>
 </div>
@@ -230,7 +231,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 <!-- CUSTOM ALERTS -->
 <div class="card">
   <div class="label">Custom Alert Levels</div>
-  <div class="row"><span class="row-label">🟢 Buy alert at or below</span><input class="inp-sm" id="buyAt" type="number" value="136" step="0.5" onchange="saveSet()"></div>
+  <div class="row"><span class="row-label">🟢 Buy alert at or below</span><input class="inp-sm" id="buyAt" type="number" value="70" step="0.5" onchange="saveSet()"></div>
   <div class="row"><span class="row-label">🔴 Sell alert at or above</span><input class="inp-sm" id="sellAt" type="number" value="175" step="0.5" onchange="saveSet()"></div>
 </div>
 
@@ -256,26 +257,56 @@ let notifOn=false, alerts=[], rsiHist=[], curPrice=null, prevPrice=null;
 let lastSig='', lastRSIState='', cooldown={};
 
 // ── CHART ─────────────────────────────────────────────────
-let chartRange = '1M';
-let chartData = []; // [{date, close}] filtered by range
+let chartRange = '1mo';
+let chartData = []; // [{ts, close, label}]
 
 function setChartRange(range) {
   chartRange = range;
   document.querySelectorAll('.chart-range-btn').forEach(b => {
-    b.classList.toggle('active', b.textContent === range);
+    b.classList.toggle('active', b.dataset.range === range);
   });
-  drawChart();
+  fetchChartData();
+}
+
+async function fetchChartData() {
+  try {
+    const r = await fetch('/api/history?range=' + chartRange);
+    const d = await r.json();
+    if (d.error) throw new Error(d.error);
+
+    // For trigger tracker, update allDays if daily data returned
+    if (d.days && d.days.length) {
+      allDays = d.days;
+      buildWindow();
+    }
+
+    // Format labels based on range
+    chartData = d.points.map(p => {
+      const dt = new Date(p.ts * 1000);
+      let label;
+      if (chartRange === '1d') {
+        // Show time in ET
+        label = dt.toLocaleTimeString('en-US', { timeZone:'America/New_York', hour:'2-digit', minute:'2-digit', hour12:false });
+      } else if (chartRange === '1wk') {
+        label = dt.toLocaleDateString('en-US', { timeZone:'America/New_York', month:'numeric', day:'numeric' })
+              + ' ' + dt.toLocaleTimeString('en-US', { timeZone:'America/New_York', hour:'2-digit', minute:'2-digit', hour12:false });
+      } else {
+        const parts = new Intl.DateTimeFormat('en-CA', { timeZone:'America/New_York', year:'numeric', month:'2-digit', day:'2-digit' }).formatToParts(dt);
+        const m = parts.find(p=>p.type==='month').value;
+        const day = parts.find(p=>p.type==='day').value;
+        label = parseInt(m)+'/'+parseInt(day);
+      }
+      return { ts: p.ts, close: p.close, label };
+    });
+    drawChart();
+  } catch(e) {
+    log('⚠️','Chart','Chart data fetch failed: '+e.message);
+  }
 }
 
 function updateChart() {
-  if (!allDays.length) return;
-  const now = new Date();
-  let cutoff;
-  if (chartRange === '1W') cutoff = new Date(now - 7*864e5);
-  else if (chartRange === '1M') cutoff = new Date(now - 30*864e5);
-  else cutoff = new Date('2026-06-12');
-  chartData = allDays.filter(d => new Date(d.date) >= cutoff);
-  drawChart();
+  // Called after history loads — only redraw if we're on a daily range
+  if (chartRange === '1mo' || chartRange === 'all') fetchChartData();
 }
 
 function drawChart() {
@@ -372,9 +403,7 @@ function drawChart() {
   const labelCount = Math.min(chartData.length, 6);
   for (let i = 0; i < labelCount; i++) {
     const idx = Math.round(i * (chartData.length - 1) / (labelCount - 1));
-    const parts = chartData[idx].date.split('-');
-    const label = parseInt(parts[1]) + '/' + parseInt(parts[2]);
-    ctx.fillText(label, xFor(idx), H - 6);
+    ctx.fillText(chartData[idx].label, xFor(idx), H - 6);
   }
 
   // High/low labels
@@ -394,29 +423,56 @@ function initChartHover() {
 
   canvas.addEventListener('mousemove', e => {
     if (!chartData.length || !canvas._chartMeta) return;
-    const { xFor, yFor, pad, iw } = canvas._chartMeta;
+    const { xFor, yFor, pad, iw, ih, W, H } = canvas._chartMeta;
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
 
     // Find closest data point
     const idx = Math.round((mx - pad.left) / iw * (chartData.length - 1));
-    if (idx < 0 || idx >= chartData.length) { tooltip.style.display='none'; return; }
+    if (idx < 0 || idx >= chartData.length) { tooltip.style.display='none'; drawChart(); return; }
     const d = chartData[idx];
     const px = xFor(idx), py = yFor(d.close);
+
+    // Redraw chart then draw crosshair lines on top
+    drawChart();
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    ctx.save();
+    ctx.scale(dpr, dpr);
+    ctx.strokeStyle = 'rgba(0,212,255,0.5)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    // Vertical line
+    ctx.beginPath();
+    ctx.moveTo(px, pad.top);
+    ctx.lineTo(px, pad.top + ih);
+    ctx.stroke();
+    // Horizontal line
+    ctx.beginPath();
+    ctx.moveTo(pad.left, py);
+    ctx.lineTo(W - pad.right, py);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // Dot at intersection
+    ctx.beginPath();
+    ctx.arc(px, py, 4, 0, Math.PI*2);
+    ctx.fillStyle = '#00d4ff';
+    ctx.fill();
+    ctx.restore();
 
     tooltip.style.display = 'block';
     tooltip.style.left = (px + 10) + 'px';
     tooltip.style.top = (py - 40) + 'px';
     document.getElementById('ttPrice').textContent = '$' + d.close.toFixed(2);
-    document.getElementById('ttDate').textContent = d.date;
+    document.getElementById('ttDate').textContent = d.label;
 
     // Keep tooltip inside card
     const cw = canvas.offsetWidth;
     if (px + 120 > cw) tooltip.style.left = (px - 110) + 'px';
   });
 
-  canvas.addEventListener('mouseleave', () => { tooltip.style.display='none'; });
+  canvas.addEventListener('mouseleave', () => { tooltip.style.display='none'; drawChart(); });
 }
 
 
@@ -680,7 +736,7 @@ function checkAlerts(sig, prev, cur, rsi) {
     log('🚀','TRIGGER','Price crossed $175.50 — watch for close above this level!');
     sendNotif('SPCX $175.50','Stock crossed trigger level — watch closing price!');
   }
-  [136,150,160,175.50,180,192,200].forEach(lv => {
+  [70,100,120,135,150,175.50,180,192,200].forEach(lv => {
     const k='lv'+lv;
     if (prev && Math.abs(cur-lv)<0.5 && (!cooldown[k]||now-cooldown[k]>3600000)) {
       log('📍','Level','Price at key level $'+lv);
@@ -701,7 +757,7 @@ function calcRSI(p, n=14) {
   return 100-(100/(1+ag/al));
 }
 function fmtVol(v){return v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(0)+'M':v>=1e3?(v/1e3).toFixed(0)+'K':v;}
-function getBuy(){return parseFloat(document.getElementById('buyAt').value)||136;}
+function getBuy(){return parseFloat(document.getElementById('buyAt').value)||70;}
 function getSell(){return parseFloat(document.getElementById('sellAt').value)||175;}
 function saveSet(){
   document.getElementById('bBuy').textContent='≤ $'+getBuy();
@@ -762,11 +818,11 @@ log('📅','Calendar','Jun 27 — Nasdaq-100 fast-entry Day 15 · Expect forced 
 // Seed RSI
 for(let i=0;i<20;i++) rsiHist.push(160+Math.random()*15);
 
-fetchHistory();
+fetchChartData(); // loads daily history, builds trigger window, draws chart
 fetchPrice();
 initChartHover();
 setInterval(fetchPrice, 30000);
-setInterval(fetchHistory, 300000);
+setInterval(fetchChartData, 300000);
 window.addEventListener('resize', () => { if(chartData.length) drawChart(); });
 </script>
 </body>
