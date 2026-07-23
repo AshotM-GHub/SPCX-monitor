@@ -45,11 +45,24 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .lu-date{font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);min-width:75px}
 .lu-desc{font-size:12px;flex:1}
 .lu-pct{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--orange)}
+/* PRICE CHART */
+.chart-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;position:relative}
+.chart-wrap{position:relative;width:100%;height:200px;margin-top:10px}
+#priceChart{width:100%;height:100%;cursor:crosshair;display:block}
+.chart-tooltip{position:absolute;background:rgba(10,10,15,0.95);border:1px solid var(--accent);border-radius:6px;padding:6px 10px;font-family:'Space Mono',monospace;font-size:11px;pointer-events:none;display:none;white-space:nowrap;z-index:10}
+.chart-tooltip .tt-price{color:var(--accent);font-weight:700;font-size:13px}
+.chart-tooltip .tt-date{color:var(--muted);font-size:10px;margin-top:2px}
+.chart-crosshair{position:absolute;pointer-events:none;display:none}
+.chart-crosshair-v{position:absolute;top:0;bottom:0;width:1px;background:rgba(0,212,255,0.3)}
+.chart-crosshair-h{position:absolute;left:0;right:0;height:1px;background:rgba(0,212,255,0.3)}
+.chart-range{display:flex;gap:6px;margin-top:8px}
+.chart-range-btn{padding:3px 10px;border-radius:4px;font-size:10px;font-family:'Space Mono',monospace;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--muted)}
+.chart-range-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,0.08)}
 .trigger-card{background:var(--panel);border:2px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
 .trigger-card.active{border-color:var(--green)}
 .trigger-card.warning{border-color:var(--yellow)}
 .days-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-top:12px}
-.day-box{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-family:'Space Mono',monospace;font-weight:700;border:1px solid var(--border);background:var(--bg);color:var(--muted);text-align:center;line-height:1.4;padding:2px}
+.day-box{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:8px;font-family:'Space Mono',monospace;font-weight:700;border:1px solid var(--border);background:var(--bg);color:var(--muted);text-align:center;line-height:1.2;padding:2px}
 .day-box.hit{background:rgba(0,255,136,.2);border-color:var(--green);color:var(--green)}
 .day-box.miss{background:rgba(255,59,92,.1);border-color:rgba(255,59,92,.3);color:var(--red)}
 .day-box.pending{background:rgba(255,214,10,.05);border-color:rgba(255,214,10,.3);color:var(--yellow)}
@@ -73,6 +86,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="card hdr" style="margin-bottom:10px">
   <div>
     <div class="ticker">SPCX</div>
@@ -84,6 +98,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   </div>
 </div>
 
+<!-- PRICE -->
 <div class="card">
   <div class="label">Live Price</div>
   <div class="price-big" id="priceBig">—</div>
@@ -96,14 +111,38 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   <div style="font-size:11px;color:var(--muted);margin-top:8px;font-family:'Space Mono',monospace" id="ahRow"></div>
 </div>
 
+<!-- PRICE CHART -->
+<div class="chart-card">
+  <div class="label">Price History</div>
+  <div class="chart-range">
+    <button class="chart-range-btn" onclick="setChartRange('1W')">1W</button>
+    <button class="chart-range-btn active" onclick="setChartRange('1M')">1M</button>
+    <button class="chart-range-btn" onclick="setChartRange('ALL')">ALL</button>
+  </div>
+  <div class="chart-wrap">
+    <canvas id="priceChart"></canvas>
+    <div class="chart-tooltip" id="chartTooltip">
+      <div class="tt-price" id="ttPrice"></div>
+      <div class="tt-date" id="ttDate"></div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;margin-top:6px">
+    <span style="font-size:10px;color:var(--muted);font-family:'Space Mono',monospace" id="chartLow"></span>
+    <span style="font-size:10px;color:var(--muted);font-family:'Space Mono',monospace">IPO: $135.00</span>
+    <span style="font-size:10px;color:var(--muted);font-family:'Space Mono',monospace" id="chartHigh"></span>
+  </div>
+</div>
+
+<!-- NOTIFY -->
 <button class="btn-notify" id="notifyBtn" onclick="askNotif()">🔔 Enable Push Notifications for Trade Alerts</button>
 
+<!-- 10% TRIGGER TRACKER — MAIN FEATURE -->
 <div class="trigger-card" id="triggerCard">
   <div style="display:flex;justify-content:space-between;align-items:center">
     <div>
       <div class="label">10% Unlock Trigger</div>
       <div style="font-size:13px;color:var(--muted);margin-top:2px">Must CLOSE ≥$175.50 on 5 of 10 consecutive trading days</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:2px">Before Q2 earnings: <span style="color:var(--yellow)">Sep 2, 2026</span></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">Window ends on Q2 earnings: <span style="color:var(--yellow)">Aug 4, 2026</span></div>
     </div>
     <div style="text-align:right">
       <div style="font-family:'Space Mono',monospace;font-size:28px;font-weight:700" id="trigHits">0</div>
@@ -115,6 +154,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   <div style="font-size:11px;margin-top:10px;font-family:'Space Mono',monospace" id="trigMsg"></div>
 </div>
 
+<!-- UNLOCK EVENT COUNTDOWN -->
 <div class="card" id="unlockCountdown" style="display:none">
   <div class="label">⚡ 10% Unlock — Sell Pressure Event</div>
   <div style="font-size:12px;color:var(--muted);margin-top:4px">2 trading days after trigger is met — insiders can sell</div>
@@ -126,8 +166,9 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   <div style="font-size:12px;color:var(--red);margin-top:10px;font-family:'Space Mono',monospace" id="unlockDate"></div>
 </div>
 
+<!-- Q2 EARNINGS COUNTDOWN -->
 <div class="card">
-  <div class="label">Q2 Earnings Countdown — Sep 2, 2026</div>
+  <div class="label">Q2 Earnings Countdown — Aug 4, 2026</div>
   <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Trigger window deadline · First major 20% unlock</div>
   <div class="countdown-grid">
     <div class="countdown-box"><div class="countdown-num" id="q2Days">—</div><div class="countdown-label">Days</div></div>
@@ -136,6 +177,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   </div>
 </div>
 
+<!-- RSI + SIGNAL -->
 <div class="grid-2">
   <div class="card" style="margin-bottom:0">
     <div class="label">RSI (14)</div>
@@ -151,6 +193,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 </div>
 <div style="margin-bottom:10px"></div>
 
+<!-- SIGNAL BREAKDOWN -->
 <div class="card">
   <div class="label">Signal Breakdown</div>
   <div class="row"><span class="row-label">Close vs IPO ($135)</span><span class="row-val" id="bIPO">—</span></div>
@@ -162,16 +205,18 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   <div class="row"><span class="row-label">Nasdaq-100 Fast Entry</span><span class="row-val" style="color:var(--yellow)">Jun 27 👀</span></div>
 </div>
 
+<!-- ALERT FEED -->
 <div class="card">
   <div class="label">Alert Feed</div>
   <div class="alert-box" id="alertFeed"><div style="color:var(--muted);font-size:12px">Loading...</div></div>
 </div>
 
+<!-- LOCKUP CALENDAR -->
 <div class="card">
   <div class="label">Full Lockup Calendar (424B4 Confirmed)</div>
   <div class="lu-item"><div class="lu-date">Jun 27</div><div class="lu-desc">Nasdaq-100 fast-entry Day 15 — forced index buying</div><div class="lu-pct" style="color:var(--green)">↑ BUY</div></div>
-  <div class="lu-item"><div class="lu-date">Pre-Sep 2</div><div class="lu-desc">Performance trigger: close ≥$175.50 × 5 of 10 days → +2 trading days</div><div class="lu-pct">+10%</div></div>
-  <div class="lu-item"><div class="lu-date">Sep 4, 2026</div><div class="lu-desc">Q2 earnings +2 days — first big unlock</div><div class="lu-pct">+20%</div></div>
+  <div class="lu-item"><div class="lu-date">By Aug 4</div><div class="lu-desc">Performance trigger: close ≥$175.50 × 5 of 10 days ending Aug 4</div><div class="lu-pct">+10%</div></div>
+  <div class="lu-item"><div class="lu-date">Aug 6, 2026</div><div class="lu-desc">Q2 earnings +2 days — first big unlock (20% of eligible shares)</div><div class="lu-pct">+20%</div></div>
   <div class="lu-item"><div class="lu-date">Aug 21</div><div class="lu-desc">Day 70 time-based release</div><div class="lu-pct">+7%</div></div>
   <div class="lu-item"><div class="lu-date">Sep 10</div><div class="lu-desc">Day 90 time-based release</div><div class="lu-pct">+7%</div></div>
   <div class="lu-item"><div class="lu-date">Sep 25</div><div class="lu-desc">Day 105 time-based release</div><div class="lu-pct">+7%</div></div>
@@ -182,6 +227,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   <div class="lu-item"><div class="lu-date">Jun 12, 2027</div><div class="lu-desc">Musk + major investors 366-day lockup expires</div><div class="lu-pct" style="color:var(--red)">MUSK</div></div>
 </div>
 
+<!-- CUSTOM ALERTS -->
 <div class="card">
   <div class="label">Custom Alert Levels</div>
   <div class="row"><span class="row-label">🟢 Buy alert at or below</span><input class="inp-sm" id="buyAt" type="number" value="136" step="0.5" onchange="saveSet()"></div>
@@ -193,41 +239,234 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 </div>
 
 <script>
-const TRIGGER_PRICE = 175.50;
-const Q2_EARNINGS = new Date('2026-09-02T09:30:00-04:00');
+// ── TRADING DAYS — fully dynamic, no hardcoding ──────────
+// Trigger counts CLOSING price >= $175.50 (NYSE ET 4:00 PM close)
+// Window = 10 consecutive trading days, starting from the FIRST day SPCX closed >= $175.50
+let allDays = [];      // full daily close history from API: [{date:'YYYY-MM-DD', close}]
+let windowDays = [];   // the active 10-day window we display/count
 
-let allDays = [];
-let windowDays = [];
+// Q2 earnings date
+const Q2_EARNINGS = new Date('2026-08-04T16:00:00-04:00'); // Aug 4, after market close ET
+
+// Trigger met date (set when 5 hits confirmed)
 let triggerMetDate = null;
+
+// ── STATE ─────────────────────────────────────────────────
 let notifOn=false, alerts=[], rsiHist=[], curPrice=null, prevPrice=null;
 let lastSig='', lastRSIState='', cooldown={};
 
-// ── ONLY CHANGE: rolling window = last 10 trading days ending today ──
+// ── CHART ─────────────────────────────────────────────────
+let chartRange = '1M';
+let chartData = []; // [{date, close}] filtered by range
+
+function setChartRange(range) {
+  chartRange = range;
+  document.querySelectorAll('.chart-range-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent === range);
+  });
+  drawChart();
+}
+
+function updateChart() {
+  if (!allDays.length) return;
+  const now = new Date();
+  let cutoff;
+  if (chartRange === '1W') cutoff = new Date(now - 7*864e5);
+  else if (chartRange === '1M') cutoff = new Date(now - 30*864e5);
+  else cutoff = new Date('2026-06-12');
+  chartData = allDays.filter(d => new Date(d.date) >= cutoff);
+  drawChart();
+}
+
+function drawChart() {
+  const canvas = document.getElementById('priceChart');
+  if (!canvas || !chartData.length) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = 200 * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = '200px';
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = 200;
+  const pad = { top: 10, right: 10, bottom: 24, left: 52 };
+  const iw = W - pad.left - pad.right;
+  const ih = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const closes = chartData.map(d => d.close);
+  const minP = Math.min(...closes) * 0.98;
+  const maxP = Math.max(...closes) * 1.02;
+  const xFor = i => pad.left + (i / (chartData.length - 1)) * iw;
+  const yFor = p => pad.top + ih - ((p - minP) / (maxP - minP)) * ih;
+
+  // Grid lines
+  ctx.strokeStyle = '#1e1e2e';
+  ctx.lineWidth = 1;
+  [0, 0.25, 0.5, 0.75, 1].forEach(t => {
+    const y = pad.top + t * ih;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+    const price = maxP - t * (maxP - minP);
+    ctx.fillStyle = '#5a5a7a';
+    ctx.font = '9px Space Mono, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText('$' + price.toFixed(0), pad.left - 4, y + 3);
+  });
+
+  // IPO line at $135
+  if (135 >= minP && 135 <= maxP) {
+    const y135 = yFor(135);
+    ctx.strokeStyle = 'rgba(255,214,10,0.4)';
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(pad.left, y135); ctx.lineTo(W - pad.right, y135); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#ffd60a';
+    ctx.font = '9px Space Mono, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('IPO $135', pad.left + 4, y135 - 3);
+  }
+
+  // $175.50 trigger line
+  if (175.50 >= minP && 175.50 <= maxP) {
+    const yTrig = yFor(175.50);
+    ctx.strokeStyle = 'rgba(0,212,255,0.3)';
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(pad.left, yTrig); ctx.lineTo(W - pad.right, yTrig); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#00d4ff';
+    ctx.font = '9px Space Mono, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('$175.50', pad.left + 4, yTrig - 3);
+  }
+
+  // Area fill
+  const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + ih);
+  const lastClose = closes[closes.length - 1];
+  const isUp = lastClose >= 135;
+  grad.addColorStop(0, isUp ? 'rgba(0,255,136,0.2)' : 'rgba(255,59,92,0.2)');
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.beginPath();
+  ctx.moveTo(xFor(0), yFor(chartData[0].close));
+  chartData.forEach((d, i) => { if(i>0) ctx.lineTo(xFor(i), yFor(d.close)); });
+  ctx.lineTo(xFor(chartData.length-1), pad.top + ih);
+  ctx.lineTo(xFor(0), pad.top + ih);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Price line
+  ctx.beginPath();
+  ctx.strokeStyle = isUp ? '#00ff88' : '#ff3b5c';
+  ctx.lineWidth = 2;
+  chartData.forEach((d, i) => {
+    i === 0 ? ctx.moveTo(xFor(i), yFor(d.close)) : ctx.lineTo(xFor(i), yFor(d.close));
+  });
+  ctx.stroke();
+
+  // X axis date labels
+  ctx.fillStyle = '#5a5a7a';
+  ctx.font = '9px Space Mono, monospace';
+  ctx.textAlign = 'center';
+  const labelCount = Math.min(chartData.length, 6);
+  for (let i = 0; i < labelCount; i++) {
+    const idx = Math.round(i * (chartData.length - 1) / (labelCount - 1));
+    const parts = chartData[idx].date.split('-');
+    const label = parseInt(parts[1]) + '/' + parseInt(parts[2]);
+    ctx.fillText(label, xFor(idx), H - 6);
+  }
+
+  // High/low labels
+  const minC = Math.min(...closes), maxC = Math.max(...closes);
+  document.getElementById('chartLow').textContent = 'Low: $' + minC.toFixed(2);
+  document.getElementById('chartHigh').textContent = 'High: $' + maxC.toFixed(2);
+
+  // Hover logic
+  canvas._chartMeta = { xFor, yFor, pad, iw, ih, W, H };
+}
+
+// Hover tooltip
+function initChartHover() {
+  const canvas = document.getElementById('priceChart');
+  const tooltip = document.getElementById('chartTooltip');
+  if (!canvas) return;
+
+  canvas.addEventListener('mousemove', e => {
+    if (!chartData.length || !canvas._chartMeta) return;
+    const { xFor, yFor, pad, iw } = canvas._chartMeta;
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+
+    // Find closest data point
+    const idx = Math.round((mx - pad.left) / iw * (chartData.length - 1));
+    if (idx < 0 || idx >= chartData.length) { tooltip.style.display='none'; return; }
+    const d = chartData[idx];
+    const px = xFor(idx), py = yFor(d.close);
+
+    tooltip.style.display = 'block';
+    tooltip.style.left = (px + 10) + 'px';
+    tooltip.style.top = (py - 40) + 'px';
+    document.getElementById('ttPrice').textContent = '$' + d.close.toFixed(2);
+    document.getElementById('ttDate').textContent = d.date;
+
+    // Keep tooltip inside card
+    const cw = canvas.offsetWidth;
+    if (px + 120 > cw) tooltip.style.left = (px - 110) + 'px';
+  });
+
+  canvas.addEventListener('mouseleave', () => { tooltip.style.display='none'; });
+}
+
+
+
+// ── FETCH HISTORY + BUILD WINDOW ─────────────────────────
+async function fetchHistory() {
+  try {
+    const r = await fetch('/api/history');
+    if (!r.ok) throw new Error('History API error');
+    const d = await r.json();
+    if (d.error) throw new Error(d.error);
+    allDays = d.days;
+    buildWindow();
+    updateChart();
+  } catch(e) {
+    log('⚠️','API','History fetch failed: '+e.message);
+  }
+}
+
 function buildWindow() {
   if (!allDays.length) return;
 
-  // Dedupe by date and sort chronologically
+  // Defensive cleanup: dedupe by date (keep last write) and sort chronologically.
+  // This guarantees correct counting even if a date key ever gets touched twice.
   const byDate = {};
   allDays.forEach(d => { byDate[d.date] = d.close; });
   allDays = Object.keys(byDate).sort().map(date => ({ date, close: byDate[date] }));
 
-  // Always show the LAST 10 trading days — window rolls forward each day
-  const last10 = allDays.slice(-10);
+  // Always show the most recent 10 trading days (rolling window).
+  // Count how many of those 10 closed >= $175.50.
+  // The trigger fires when 5 of any 10 consecutive trading days close above the threshold.
+  const windowSlice = allDays.slice(-10);
 
-  windowDays = last10.map(d => ({
+  windowDays = windowSlice.map(d => ({
     label: fmtDateLabel(d.date),
     close: d.close,
-    hit: d.close >= TRIGGER_PRICE
+    hit: d.close >= 175.50
   }));
 
   renderTrigger();
 }
 
 function fmtDateLabel(isoDate) {
+  // isoDate is 'YYYY-MM-DD' -> 'M/D'
   const parts = isoDate.split('-');
   return parseInt(parts[1]) + '/' + parseInt(parts[2]);
 }
 
+// Returns the America/New_York calendar date as 'YYYY-MM-DD' -- same function as history.js
+// so the date keys always match between the two.
 function todayKey() {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit'
@@ -238,27 +477,19 @@ function todayKey() {
   return `${y}-${m}-${d}`;
 }
 
+// Update today's close in allDays (live price becomes today's running close until market closes)
 function updateTodayClose(price) {
   const t = todayKey();
   const idx = allDays.findIndex(d => d.date === t);
-  if (idx >= 0) allDays[idx].close = price;
-  else allDays.push({ date: t, close: price });
+  if (idx >= 0) {
+    allDays[idx].close = price;
+  } else {
+    allDays.push({ date: t, close: price });
+  }
   buildWindow();
 }
 
-async function fetchHistory() {
-  try {
-    const r = await fetch('/api/history');
-    if (!r.ok) throw new Error('History API error');
-    const d = await r.json();
-    if (d.error) throw new Error(d.error);
-    allDays = d.days;
-    buildWindow();
-  } catch(e) {
-    log('⚠️','API','History fetch failed: '+e.message);
-  }
-}
-
+// ── FETCH LIVE PRICE ──────────────────────────────────────
 async function fetchPrice() {
   try {
     const r = await fetch('/api/price');
@@ -283,6 +514,7 @@ function applyPrice(d) {
   const pct = ((d.price - ipo) / ipo * 100).toFixed(2);
   const isUp = d.price >= ipo;
 
+  // Price card
   document.getElementById('priceBig').textContent = '$' + d.price.toFixed(2);
   const sub = document.getElementById('priceSub');
   sub.textContent = (isUp?'+':'') + pct + '% from IPO ($135)';
@@ -293,12 +525,15 @@ function applyPrice(d) {
   if (d.afterHours) document.getElementById('ahRow').textContent = 'After Hours: $'+d.afterHours.toFixed(2);
 
   updateTodayClose(d.price);
+  updateChart();
 
+  // RSI
   const rsiR = rsi.toFixed(1);
   document.getElementById('rsiNum').textContent = rsiR;
   document.getElementById('rsiFill').style.width = Math.min(rsi,100)+'%';
   document.getElementById('rsiThumb').style.left = Math.min(rsi,100)+'%';
 
+  // Signal
   let sig='HOLD', reason='', cls='hold';
   if (rsi < 35) { sig='BUY'; cls='buy'; reason='RSI oversold — potential bounce'; }
   else if (rsi > 70) { sig='SELL'; cls='sell'; reason='RSI overbought — potential pullback'; }
@@ -309,10 +544,11 @@ function applyPrice(d) {
   t.textContent = sig; t.className = 'tag '+cls;
   document.getElementById('sigReason').textContent = reason || 'No strong signal';
 
+  // Breakdown
   document.getElementById('bIPO').textContent = '$'+d.price.toFixed(2)+' ('+(isUp?'+':'')+pct+'%)';
   document.getElementById('bIPO').className = 'row-val '+(isUp?'up':'down');
-  const aboveTrig = d.price >= TRIGGER_PRICE;
-  document.getElementById('bTrig').textContent = aboveTrig ? '✅ ABOVE $175.50' : '❌ $'+(TRIGGER_PRICE-d.price).toFixed(2)+' below';
+  const aboveTrig = d.price >= 175.50;
+  document.getElementById('bTrig').textContent = aboveTrig ? '✅ ABOVE $175.50' : '❌ $'+(175.50-d.price).toFixed(2)+' below';
   document.getElementById('bTrig').style.color = aboveTrig ? 'var(--green)' : 'var(--muted)';
   if (d.afterHours) document.getElementById('bAH').textContent = '$'+d.afterHours.toFixed(2);
   document.getElementById('bRSI').innerHTML = '<span class="tag '+(rsi<35?'buy':rsi>70?'sell':'hold')+'" style="font-size:10px;padding:3px 8px">'+(rsi<35?'OVERSOLD':rsi>70?'OVERBOUGHT':'NEUTRAL')+' '+rsiR+'</span>';
@@ -322,7 +558,16 @@ function applyPrice(d) {
   checkAlerts(sig, prevPrice, d.price, rsi);
 }
 
+// ── TRIGGER TRACKER ───────────────────────────────────────
 function renderTrigger() {
+  // After Aug 4 earnings, the 10% performance trigger expires — hide it entirely
+  const now = new Date();
+  const triggerExpiry = new Date('2026-08-04T20:00:00-04:00'); // end of Aug 4 ET
+  if (now > triggerExpiry) {
+    document.getElementById('triggerCard').style.display = 'none';
+    document.getElementById('unlockCountdown').style.display = 'none';
+    return;
+  }
   const hits = windowDays.filter(d => d.hit).length;
   const total = windowDays.length;
   const pct = Math.min(hits / 5 * 100, 100);
@@ -330,9 +575,11 @@ function renderTrigger() {
   document.getElementById('trigHits').textContent = hits;
   document.getElementById('trigProgress').style.width = pct + '%';
 
+  // Color the card
   const card = document.getElementById('triggerCard');
   card.className = 'trigger-card ' + (hits >= 5 ? 'active' : hits >= 3 ? 'warning' : '');
 
+  // Days grid — Option B: show all days in window, green if hit, red if not
   const grid = document.getElementById('daysGrid');
   grid.innerHTML = windowDays.map(d =>
     `<div class="day-box ${d.hit?'hit':'miss'}">
@@ -340,59 +587,80 @@ function renderTrigger() {
       <span>$${d.close.toFixed(0)}</span>
     </div>`
   ).join('');
+  // Fill remaining slots up to 10 (window not yet full)
   for (let i = 0; i < 10 - total; i++) {
     grid.innerHTML += `<div class="day-box pending"><span>—</span></div>`;
   }
 
+  // Message
   const msg = document.getElementById('trigMsg');
   if (hits >= 5) {
     msg.textContent = '🚀 TRIGGER MET! 10% unlock fires 2 trading days after the 5th qualifying close.';
     msg.style.color = 'var(--green)';
-    if (!triggerMetDate) triggerMetDate = addTradingDays(new Date(), 2);
+    if (!triggerMetDate) {
+      triggerMetDate = addTradingDays(new Date(), 2);
+    }
     showUnlockCountdown();
-    log('🚀','TRIGGER','10% unlock condition MET!');
-    sendNotif('SPCX 🚀 TRIGGER MET','10% insider shares unlock in 2 trading days!');
+    log('🚀', 'TRIGGER', '10% unlock condition MET! Sell pressure expected in 2 trading days.');
+    sendNotif('SPCX 🚀 TRIGGER MET', '10% insider shares unlock in 2 trading days!');
   } else {
     const needed = 5 - hits;
     const daysLeft = Math.round((Q2_EARNINGS - new Date()) / (1000*60*60*24));
-    msg.textContent = total === 0
-      ? 'Waiting for closing price data...'
-      : `${needed} more closing day(s) ≥$175.50 needed in this window · ${daysLeft} days until Sep 2 deadline`;
+    msg.textContent = `${needed} more closing day(s) ≥$175.50 needed · ${daysLeft} days until Aug 4 earnings deadline`;
     msg.style.color = 'var(--muted)';
     document.getElementById('unlockCountdown').style.display = 'none';
   }
 }
 
 function addTradingDays(date, days) {
-  let d = new Date(date), added = 0;
-  while (added < days) { d.setDate(d.getDate()+1); if(d.getDay()!==0&&d.getDay()!==6) added++; }
+  let d = new Date(date);
+  let added = 0;
+  while (added < days) {
+    d.setDate(d.getDate() + 1);
+    if (d.getDay() !== 0 && d.getDay() !== 6) added++;
+  }
   return d;
 }
 
 function showUnlockCountdown() {
   if (!triggerMetDate) return;
   document.getElementById('unlockCountdown').style.display = 'block';
-  const diff = triggerMetDate - new Date();
-  if (diff <= 0) { document.getElementById('unlockDate').textContent = '⚠️ UNLOCK DAY — Expect sell pressure today!'; return; }
-  document.getElementById('cdDays').textContent = Math.floor(diff/(1000*60*60*24));
-  document.getElementById('cdHours').textContent = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
-  document.getElementById('cdMins').textContent = Math.floor((diff%(1000*60*60))/(1000*60));
+  const now = new Date();
+  const diff = triggerMetDate - now;
+  if (diff <= 0) {
+    document.getElementById('unlockDate').textContent = '⚠️ UNLOCK DAY — Expect sell pressure today!';
+    return;
+  }
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+  document.getElementById('cdDays').textContent = days;
+  document.getElementById('cdHours').textContent = hours;
+  document.getElementById('cdMins').textContent = mins;
   document.getElementById('unlockDate').textContent = 'Unlock date: ' + triggerMetDate.toDateString();
 }
 
+// ── Q2 COUNTDOWN ──────────────────────────────────────────
 function updateQ2Countdown() {
-  const diff = Q2_EARNINGS - new Date();
-  if (diff <= 0) { ['q2Days','q2Hours','q2Mins'].forEach(id=>document.getElementById(id).textContent='0'); return; }
+  const now = new Date();
+  const diff = Q2_EARNINGS - now;
+  if (diff <= 0) {
+    document.getElementById('q2Days').textContent = '0';
+    document.getElementById('q2Hours').textContent = '0';
+    document.getElementById('q2Mins').textContent = '0';
+    return;
+  }
   document.getElementById('q2Days').textContent = Math.floor(diff/(1000*60*60*24));
   document.getElementById('q2Hours').textContent = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
   document.getElementById('q2Mins').textContent = Math.floor((diff%(1000*60*60))/(1000*60));
 }
 
+// ── ALERTS ────────────────────────────────────────────────
 function checkAlerts(sig, prev, cur, rsi) {
   const now = Date.now();
   if (sig !== lastSig && sig !== 'HOLD') {
     if (!cooldown.sig || now - cooldown.sig > 300000) {
-      const m = sig==='BUY'?'BUY at $'+cur.toFixed(2)+' — open SoFi':'SELL at $'+cur.toFixed(2)+' — open SoFi';
+      const m = sig==='BUY' ? 'BUY at $'+cur.toFixed(2)+' — open SoFi' : 'SELL at $'+cur.toFixed(2)+' — open SoFi';
       log(sig==='BUY'?'🟢':'🔴', sig, m);
       sendNotif('SPCX '+sig, m);
       cooldown.sig = now;
@@ -401,19 +669,33 @@ function checkAlerts(sig, prev, cur, rsi) {
   lastSig = sig;
   const rs = rsi<35?'oversold':rsi>70?'overbought':'neutral';
   if (rs !== lastRSIState && rs !== 'neutral') {
-    if (!cooldown.rsi || now - cooldown.rsi > 600000) { log('📊','RSI','RSI '+rs.toUpperCase()+' at '+rsi.toFixed(1)); cooldown.rsi = now; }
+    if (!cooldown.rsi || now - cooldown.rsi > 600000) {
+      log('📊','RSI','RSI '+rs.toUpperCase()+' at '+rsi.toFixed(1));
+      sendNotif('SPCX RSI','RSI '+rs+' at '+rsi.toFixed(1));
+      cooldown.rsi = now;
+    }
   }
   lastRSIState = rs;
-  if (prev && cur >= TRIGGER_PRICE && prev < TRIGGER_PRICE) {
+  if (prev && cur >= 175.50 && prev < 175.50) {
     log('🚀','TRIGGER','Price crossed $175.50 — watch for close above this level!');
     sendNotif('SPCX $175.50','Stock crossed trigger level — watch closing price!');
   }
+  [136,150,160,175.50,180,192,200].forEach(lv => {
+    const k='lv'+lv;
+    if (prev && Math.abs(cur-lv)<0.5 && (!cooldown[k]||now-cooldown[k]>3600000)) {
+      log('📍','Level','Price at key level $'+lv);
+      cooldown[k]=now;
+    }
+  });
 }
 
+// ── UTILS ─────────────────────────────────────────────────
 function calcRSI(p, n=14) {
   if (p.length < n+1) return 50;
   let g=0, l=0;
-  for (let i=p.length-n; i<p.length; i++) { const d=p[i]-p[i-1]; d>0?g+=d:l+=Math.abs(d); }
+  for (let i=p.length-n; i<p.length; i++) {
+    const d=p[i]-p[i-1]; d>0?g+=d:l+=Math.abs(d);
+  }
   const ag=g/n, al=l/n;
   if (al===0) return 100;
   return 100-(100/(1+ag/al));
@@ -437,39 +719,55 @@ function log(icon,type,msg){
 async function askNotif(){
   if(!('Notification' in window)){log('⚠️','System','Use Chrome or add to Home Screen for notifications.');return;}
   const p=await Notification.requestPermission();
-  if(p==='granted'){notifOn=true;document.getElementById('notifyBtn').textContent='✅ Notifications Enabled';document.getElementById('notifyBtn').classList.add('on');sendNotif('SPCX Monitor','Trade alerts are now active.');}
-  else{log('📱','Tip','Add to Home Screen first, then enable notifications.');}
+  if(p==='granted'){
+    notifOn=true;
+    document.getElementById('notifyBtn').textContent='✅ Notifications Enabled';
+    document.getElementById('notifyBtn').classList.add('on');
+    sendNotif('SPCX Monitor','Trade alerts are now active.');
+  } else {
+    log('📱','Tip','Add to Home Screen first, then enable notifications.');
+  }
 }
 function sendNotif(t,b){if(notifOn&&Notification.permission==='granted') new Notification(t,{body:b});}
 function updateMkt(){
-  const now=new Date();
-  const etParts=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hour12:false,weekday:'short'}).formatToParts(now);
-  const hour=parseInt(etParts.find(p=>p.type==='hour').value);
-  const minute=parseInt(etParts.find(p=>p.type==='minute').value);
-  const wkday=etParts.find(p=>p.type==='weekday').value;
-  const mins=hour*60+minute, wk=wkday==='Sat'||wkday==='Sun';
-  const open=!wk&&mins>=570&&mins<960, after=!wk&&mins>=960&&mins<1200, pre=!wk&&mins>=240&&mins<570;
+  const now = new Date();
+  // Get current time components in America/New_York directly
+  const etParts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', hour12: false, weekday: 'short'
+  }).formatToParts(now);
+  const hour = parseInt(etParts.find(p=>p.type==='hour').value);
+  const minute = parseInt(etParts.find(p=>p.type==='minute').value);
+  const wkday = etParts.find(p=>p.type==='weekday').value;
+  const mins = hour*60 + minute;
+  const wk = wkday === 'Sat' || wkday === 'Sun';
+  const open = !wk && mins>=570 && mins<960;   // 9:30 AM - 4:00 PM ET
+  const after = !wk && mins>=960 && mins<1200; // 4:00 PM - 8:00 PM ET
+  const pre = !wk && mins>=240 && mins<570;    // 4:00 AM - 9:30 AM ET
   document.getElementById('dot').className='dot'+(open?'':' off');
   document.getElementById('mktStatus').textContent=open?'OPEN':after?'AFTER-HRS':pre?'PRE-MKT':'CLOSED';
 }
 
+// ── INIT ──────────────────────────────────────────────────
 renderTrigger();
 updateQ2Countdown();
 updateMkt();
-setInterval(updateMkt,30000);
-setInterval(updateQ2Countdown,60000);
-setInterval(showUnlockCountdown,60000);
+setInterval(updateMkt, 30000);
+setInterval(updateQ2Countdown, 60000);
+setInterval(showUnlockCountdown, 60000);
 
 log('🚀','System','SPCX Mission Control live · Lockup data from 424B4 prospectus');
-log('📋','Trigger','Rule: CLOSE ≥$175.50 on 5 of 10 consecutive trading days before Sep 2 (NYSE ET close)');
+log('📋','Trigger','Rule: CLOSE ≥$175.50 on 5 of 10 consecutive trading days ending Aug 4 (NYSE ET close)');
 log('📅','Calendar','Jun 27 — Nasdaq-100 fast-entry Day 15 · Expect forced index buying');
 
+// Seed RSI
 for(let i=0;i<20;i++) rsiHist.push(160+Math.random()*15);
 
 fetchHistory();
 fetchPrice();
-setInterval(fetchPrice,30000);
-setInterval(fetchHistory,300000);
+initChartHover();
+setInterval(fetchPrice, 30000);
+setInterval(fetchHistory, 300000);
+window.addEventListener('resize', () => { if(chartData.length) drawChart(); });
 </script>
 </body>
 </html>
