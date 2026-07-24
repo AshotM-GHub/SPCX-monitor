@@ -19,9 +19,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 @keyframes p{0%,100%{opacity:1}50%{opacity:.3}}
 .price-big{font-size:44px;font-weight:700;font-family:'Space Mono',monospace;line-height:1}
 .price-sub{font-size:13px;font-family:'Space Mono',monospace;margin-top:4px}
-.meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
-.meta-box{background:var(--bg);border-radius:8px;padding:8px 10px}
-.meta-val{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;margin-top:2px}
+
 .rsi-num{font-size:28px;font-weight:700;font-family:'Space Mono',monospace}
 .rsi-bar{height:8px;background:var(--border);border-radius:4px;margin-top:10px;position:relative}
 .rsi-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--yellow),var(--red));transition:width .5s}
@@ -34,17 +32,17 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .row:last-child{border-bottom:none}
 .row-label{font-size:13px}
 .row-val{font-family:'Space Mono',monospace;font-size:12px}
-.alert-box{max-height:180px;overflow-y:auto}
-.alert-item{display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start}
-.alert-item:last-child{border-bottom:none}
-.alert-body{font-size:12px;line-height:1.4}
-.alert-body strong{color:var(--accent)}
-.alert-time{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:2px}
+
 .lu-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
 .lu-item:last-child{border-bottom:none}
 .lu-date{font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);min-width:75px}
 .lu-desc{font-size:12px;flex:1}
 .lu-pct{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--orange)}
+/* STATS GRID */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;margin-top:12px;background:var(--border);border-radius:8px;overflow:hidden}
+.stat-item{background:var(--bg);padding:8px 10px}
+.stat-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-family:'Space Mono',monospace}
+.stat-val{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--text);margin-top:2px}
 /* PRICE CHART */
 .chart-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;position:relative}
 .chart-wrap{position:relative;width:100%;height:200px;margin-top:10px}
@@ -103,12 +101,23 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   <div class="label">Live Price</div>
   <div class="price-big" id="priceBig">—</div>
   <div class="price-sub muted" id="priceSub">loading...</div>
-  <div class="meta-grid">
-    <div class="meta-box"><div class="label">Today High</div><div class="meta-val up" id="mHigh">—</div></div>
-    <div class="meta-box"><div class="label">Today Low</div><div class="meta-val" id="mLow">—</div></div>
-    <div class="meta-box"><div class="label">Volume</div><div class="meta-val" id="mVol">—</div></div>
+  <div style="font-size:11px;color:var(--muted);margin-top:4px;font-family:'Space Mono',monospace" id="ahRow"></div>
+
+  <!-- STATS GRID — like Apple Stocks app -->
+  <div class="stats-grid">
+    <div class="stat-item"><div class="stat-label">Open</div><div class="stat-val" id="sOpen">—</div></div>
+    <div class="stat-item"><div class="stat-label">High</div><div class="stat-val up" id="sHigh">—</div></div>
+    <div class="stat-item"><div class="stat-label">Low</div><div class="stat-val" id="sLow">—</div></div>
+    <div class="stat-item"><div class="stat-label">Vol</div><div class="stat-val" id="sVol">—</div></div>
+    <div class="stat-item"><div class="stat-label">Avg Vol</div><div class="stat-val" id="sAvgVol">—</div></div>
+    <div class="stat-item"><div class="stat-label">Mkt Cap</div><div class="stat-val" id="sMktCap">—</div></div>
+    <div class="stat-item"><div class="stat-label">52W H</div><div class="stat-val up" id="s52H">—</div></div>
+    <div class="stat-item"><div class="stat-label">52W L</div><div class="stat-val" id="s52L">—</div></div>
+    <div class="stat-item"><div class="stat-label">P/E</div><div class="stat-val" id="sPE">—</div></div>
+    <div class="stat-item"><div class="stat-label">EPS</div><div class="stat-val" id="sEPS">—</div></div>
+    <div class="stat-item"><div class="stat-label">Beta</div><div class="stat-val" id="sBeta">—</div></div>
+    <div class="stat-item"><div class="stat-label">Yield</div><div class="stat-val" id="sYield">—</div></div>
   </div>
-  <div style="font-size:11px;color:var(--muted);margin-top:8px;font-family:'Space Mono',monospace" id="ahRow"></div>
 </div>
 
 <!-- PRICE CHART -->
@@ -203,19 +212,13 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   <div class="row"><span class="row-label">RSI</span><span id="bRSI"><span class="tag hold" style="font-size:10px;padding:3px 8px">—</span></span></div>
   <div class="row"><span class="row-label">🟢 Your Buy Level</span><span class="row-val up" id="bBuy">≤ $70</span></div>
   <div class="row"><span class="row-label">🔴 Your Sell Level</span><span class="row-val down" id="bSell">≥ $175</span></div>
-  <div class="row"><span class="row-label">Nasdaq-100 Fast Entry</span><span class="row-val" style="color:var(--yellow)">Jun 27 👀</span></div>
-</div>
-
-<!-- ALERT FEED -->
-<div class="card">
-  <div class="label">Alert Feed</div>
-  <div class="alert-box" id="alertFeed"><div style="color:var(--muted);font-size:12px">Loading...</div></div>
+  <div class="row"><span class="row-label">📅 Next Event</span><span class="row-val" style="color:var(--yellow)" id="bNextEvent">—</span></div>
 </div>
 
 <!-- LOCKUP CALENDAR -->
 <div class="card">
   <div class="label">Full Lockup Calendar (424B4 Confirmed)</div>
-  <div class="lu-item"><div class="lu-date">Jun 27</div><div class="lu-desc">Nasdaq-100 fast-entry Day 15 — forced index buying</div><div class="lu-pct" style="color:var(--green)">↑ BUY</div></div>
+  <div class="lu-item"><div class="lu-date">Jun 27</div><div class="lu-desc">Nasdaq-100 fast-entry Day 15 — forced index buying (passed)</div><div class="lu-pct" style="color:var(--muted)">✓</div></div>
   <div class="lu-item"><div class="lu-date">By Aug 4</div><div class="lu-desc">Performance trigger: close ≥$175.50 × 5 of 10 days ending Aug 4</div><div class="lu-pct">+10%</div></div>
   <div class="lu-item"><div class="lu-date">Aug 6, 2026</div><div class="lu-desc">Q2 earnings +2 days — first big unlock (20% of eligible shares)</div><div class="lu-pct">+20%</div></div>
   <div class="lu-item"><div class="lu-date">Aug 21</div><div class="lu-desc">Day 70 time-based release</div><div class="lu-pct">+7%</div></div>
@@ -421,58 +424,83 @@ function initChartHover() {
   const tooltip = document.getElementById('chartTooltip');
   if (!canvas) return;
 
-  canvas.addEventListener('mousemove', e => {
+  function handlePointer(clientX, clientY) {
     if (!chartData.length || !canvas._chartMeta) return;
     const { xFor, yFor, pad, iw, ih, W, H } = canvas._chartMeta;
+
+    // Get position relative to canvas in CSS pixels (NOT scaled by DPR)
     const rect = canvas.getBoundingClientRect();
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
+    const mx = clientX - rect.left;
+    const my = clientY - rect.top;
 
-    // Find closest data point
-    const idx = Math.round((mx - pad.left) / iw * (chartData.length - 1));
-    if (idx < 0 || idx >= chartData.length) { tooltip.style.display='none'; drawChart(); return; }
+    // Find closest data point using CSS pixel coordinates
+    const idx = Math.max(0, Math.min(chartData.length - 1,
+      Math.round((mx - pad.left) / iw * (chartData.length - 1))
+    ));
     const d = chartData[idx];
-    const px = xFor(idx), py = yFor(d.close);
+    const px = xFor(idx);  // CSS pixel x of data point
+    const py = yFor(d.close); // CSS pixel y of data point
 
-    // Redraw chart then draw crosshair lines on top
+    // Redraw base chart first, then draw crosshair on top
     drawChart();
     const ctx = canvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
+
+    // Draw in physical pixels (canvas is already DPR-scaled internally)
+    // We must scale our CSS coordinates to physical pixels for drawing
     ctx.save();
-    ctx.scale(dpr, dpr);
-    ctx.strokeStyle = 'rgba(0,212,255,0.5)';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([4, 4]);
-    // Vertical line
+    ctx.strokeStyle = 'rgba(0,212,255,0.6)';
+    ctx.lineWidth = dpr;
+    ctx.setLineDash([4 * dpr, 4 * dpr]);
+
+    // Vertical line — full height of chart area
     ctx.beginPath();
-    ctx.moveTo(px, pad.top);
-    ctx.lineTo(px, pad.top + ih);
+    ctx.moveTo(px * dpr, pad.top * dpr);
+    ctx.lineTo(px * dpr, (pad.top + ih) * dpr);
     ctx.stroke();
-    // Horizontal line
+
+    // Horizontal line — full width of chart area
     ctx.beginPath();
-    ctx.moveTo(pad.left, py);
-    ctx.lineTo(W - pad.right, py);
+    ctx.moveTo(pad.left * dpr, py * dpr);
+    ctx.lineTo((W - pad.right) * dpr, py * dpr);
     ctx.stroke();
+
     ctx.setLineDash([]);
-    // Dot at intersection
+
+    // Dot at data point
     ctx.beginPath();
-    ctx.arc(px, py, 4, 0, Math.PI*2);
+    ctx.arc(px * dpr, py * dpr, 4 * dpr, 0, Math.PI * 2);
     ctx.fillStyle = '#00d4ff';
     ctx.fill();
     ctx.restore();
 
+    // Tooltip in CSS pixels
     tooltip.style.display = 'block';
-    tooltip.style.left = (px + 10) + 'px';
-    tooltip.style.top = (py - 40) + 'px';
+    let tx = px + 12;
+    if (tx + 120 > W) tx = px - 120;
+    tooltip.style.left = tx + 'px';
+    tooltip.style.top = Math.max(pad.top, py - 44) + 'px';
     document.getElementById('ttPrice').textContent = '$' + d.close.toFixed(2);
     document.getElementById('ttDate').textContent = d.label;
+  }
 
-    // Keep tooltip inside card
-    const cw = canvas.offsetWidth;
-    if (px + 120 > cw) tooltip.style.left = (px - 110) + 'px';
-  });
+  function hideTooltip() {
+    tooltip.style.display = 'none';
+    drawChart();
+  }
 
-  canvas.addEventListener('mouseleave', () => { tooltip.style.display='none'; drawChart(); });
+  // Mouse events
+  canvas.addEventListener('mousemove', e => handlePointer(e.clientX, e.clientY));
+  canvas.addEventListener('mouseleave', hideTooltip);
+
+  // Touch events (mobile)
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    const t = e.touches[0];
+    handlePointer(t.clientX, t.clientY);
+  }, { passive: false });
+  canvas.addEventListener('touchend', hideTooltip);
+  canvas.addEventListener('touchcancel', hideTooltip);
 }
 
 
@@ -575,9 +603,20 @@ function applyPrice(d) {
   const sub = document.getElementById('priceSub');
   sub.textContent = (isUp?'+':'') + pct + '% from IPO ($135)';
   sub.className = 'price-sub ' + (isUp?'up':'down');
-  document.getElementById('mHigh').textContent = d.high ? '$'+d.high.toFixed(2) : '—';
-  document.getElementById('mLow').textContent = d.low ? '$'+d.low.toFixed(2) : '—';
-  document.getElementById('mVol').textContent = d.volume ? fmtVol(d.volume) : '—';
+  // Stats grid
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val ?? '—'; };
+  set('sOpen',   d.open   ? '$'+d.open.toFixed(2)   : '—');
+  set('sHigh',   d.high   ? '$'+d.high.toFixed(2)   : '—');
+  set('sLow',    d.low    ? '$'+d.low.toFixed(2)    : '—');
+  set('sVol',    d.volume  ? fmtVol(d.volume)        : '—');
+  set('sAvgVol', d.avgVolume ? fmtVol(d.avgVolume)  : '—');
+  set('sMktCap', d.mktCap  ? fmtCap(d.mktCap)       : '—');
+  set('s52H',    d.fiftyTwoHigh ? '$'+d.fiftyTwoHigh.toFixed(2) : '—');
+  set('s52L',    d.fiftyTwoLow  ? '$'+d.fiftyTwoLow.toFixed(2)  : '—');
+  set('sPE',     d.pe    != null ? d.pe.toFixed(1)   : 'N/A');
+  set('sEPS',    d.eps   != null ? '$'+d.eps.toFixed(2) : 'N/A');
+  set('sBeta',   d.beta  != null ? d.beta.toFixed(2) : '—');
+  set('sYield',  d.yield != null ? (d.yield*100).toFixed(2)+'%' : 'N/A');
   if (d.afterHours) document.getElementById('ahRow').textContent = 'After Hours: $'+d.afterHours.toFixed(2);
 
   updateTodayClose(d.price);
@@ -757,6 +796,27 @@ function calcRSI(p, n=14) {
   return 100-(100/(1+ag/al));
 }
 function fmtVol(v){return v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(0)+'M':v>=1e3?(v/1e3).toFixed(0)+'K':v;}
+function fmtCap(v){return v>=1e12?(v/1e12).toFixed(2)+'T':v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(0)+'M':'—';}
+// ── NEXT EVENT ────────────────────────────────────────────
+const EVENTS = [
+  { date: '2026-08-04', label: 'Aug 4 — Q2 Earnings + trigger deadline' },
+  { date: '2026-08-06', label: 'Aug 6 — First big unlock (+20%)' },
+  { date: '2026-08-21', label: 'Aug 21 — Day 70 release (+7%)' },
+  { date: '2026-09-10', label: 'Sep 10 — Day 90 release (+7%)' },
+  { date: '2026-09-25', label: 'Sep 25 — Day 105 release (+7%)' },
+  { date: '2026-10-10', label: 'Oct 10 — Day 120 release (+7%)' },
+  { date: '2026-10-25', label: 'Oct 25 — Day 135 release (+7%)' },
+  { date: '2026-12-08', label: 'Dec 8 — Full lockup expiration' },
+  { date: '2027-06-12', label: "Jun 12 '27 — Musk lockup expires" },
+];
+
+function updateNextEvent() {
+  const now = new Date();
+  const next = EVENTS.find(e => new Date(e.date) > now);
+  const el = document.getElementById('bNextEvent');
+  if (el) el.textContent = next ? next.label : 'All events passed';
+}
+
 function getBuy(){return parseFloat(document.getElementById('buyAt').value)||70;}
 function getSell(){return parseFloat(document.getElementById('sellAt').value)||175;}
 function saveSet(){
@@ -765,12 +825,10 @@ function saveSet(){
   log('⚙️','Settings','Buy ≤$'+getBuy()+', Sell ≥$'+getSell());
 }
 function log(icon,type,msg){
+  // Alert feed removed — just keep in memory for notifications
   const time=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   alerts.unshift({icon,type,msg,time});
   if(alerts.length>30) alerts.pop();
-  document.getElementById('alertFeed').innerHTML=alerts.map(a=>
-    `<div class="alert-item"><div style="font-size:14px;flex-shrink:0">${a.icon}</div><div><div class="alert-body"><strong>[${a.type}]</strong> ${a.msg}</div><div class="alert-time">${a.time}</div></div></div>`
-  ).join('');
 }
 async function askNotif(){
   if(!('Notification' in window)){log('⚠️','System','Use Chrome or add to Home Screen for notifications.');return;}
@@ -813,7 +871,8 @@ setInterval(showUnlockCountdown, 60000);
 
 log('🚀','System','SPCX Mission Control live · Lockup data from 424B4 prospectus');
 log('📋','Trigger','Rule: CLOSE ≥$175.50 on 5 of 10 consecutive trading days ending Aug 4 (NYSE ET close)');
-log('📅','Calendar','Jun 27 — Nasdaq-100 fast-entry Day 15 · Expect forced index buying');
+log('📅','Calendar','Next event: Aug 4 — Q2 earnings + trigger deadline + first unlock window opens');
+updateNextEvent();
 
 // Seed RSI
 for(let i=0;i<20;i++) rsiHist.push(160+Math.random()*15);
